@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-import os
 import numpy as np
 from pathlib import Path
 from attention_viz_utils import render_attention_entry
 
 def main():
     # Sabit dizin
-    base_dir = Path("./attn_dump2/mockLargerDataset")
+    base_dir = Path("./outputs/Helpdesk")
     scores_path = base_dir / "block_mha_scores.npy"
     batch_txt_path = base_dir / "batch_prefixes.txt"
     case_ids_path = base_dir / "batch_case_ids.txt"

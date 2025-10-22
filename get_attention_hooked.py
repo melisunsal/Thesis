@@ -8,7 +8,7 @@ from types import MethodType
 from tensorflow.keras import mixed_precision
 from collections import defaultdict, deque
 
-from attention_viz_utils import save_batch_metadata
+from visualizeAttention.attention_viz_utils import save_batch_metadata
 
 mixed_precision.set_global_policy("float32")
 tf.config.run_functions_eagerly(True)
@@ -125,9 +125,9 @@ def print_batch(dl, X, use_df, xdict, ydict, maxlen):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dataset", default="mockLargerDataset")
+    ap.add_argument("--dataset", default="Helpdesk")
     ap.add_argument("--ckpt_dir", default="./models")
-    ap.add_argument("--out_dir", default="./attn_dump2")
+    ap.add_argument("--out_dir", default="./outputs")
     ap.add_argument("--batch_size", type=int, default=32)
 
     args = ap.parse_args()

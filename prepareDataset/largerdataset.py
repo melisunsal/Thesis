@@ -82,7 +82,7 @@ def gen_case(case_id, start_dt):
     return events
 
 def main():
-    os.makedirs("datasets/mockLargerDataset", exist_ok=True)
+    os.makedirs("../datasets/mockLargerDataset", exist_ok=True)
     rows = []
     base = datetime(2024, 1, 1, 8, 0, 0)
     for cid in range(1, N_CASES + 1):
