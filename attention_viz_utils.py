@@ -91,15 +91,48 @@ def render_attention(scores_np, out_dir, sample_idx=0, labels=None, title_prefix
             ax.set_yticks(range(len(labels))); ax.set_yticklabels(labels, fontsize=8)
         plt.colorbar(); plt.tight_layout(); plt.savefig(Path(out_dir)/f"sample{sample_idx}_head{h}_heatmap.png", dpi=160); plt.close()
 
-    last = Savg[-1]
-    plt.figure(figsize=(8,4))
-    plt.bar(range(len(last)), last)
+    # Savg: [L, L] (head-averaged attention matrix)
+    L = Savg.shape[0]
+
+    # heatmap'te kullandığın x-ekseni etiketlerini L uzunluğunda üret:
+    # align_right=True ise: [PAD,...,PAD, token1, token2, ..., token_t]
+    tokens = [lbl for lbl in labels if lbl != "[PAD]"]  # PAD'siz gerçek tokenlar
+    t = len(tokens)
+    xlabels_full = (["[PAD]"] * (L - t)) + tokens  # uzunluk L
+
+    # Son query satırı (en alt satır)
+    last_row = Savg[-1]  # shape [L]
+
+    # Geçerli kolon aralığı: sağdan t sütun
+    start = L - t
+    cols = list(range(start, L))
+
+    # Bar için değerler ve etiketler (HEATMAP İLE AYNI SIRA)
+    vals = last_row[start:L].astype(float)  # shape [t]
+    # İstersen normalize et:
+    s = float(vals.sum());
+    vals = vals / (s + 1e-12)
+
+    bar_labels = xlabels_full[start:L]  # örn: ['register','classify','analyze']
+
+    # Debug: sayıları da yaz
+    print("Last-step (i=L-1) attention:")
+    for lbl, v in zip(bar_labels, vals):
+        print(f"  {lbl:>10s}: {v:.4f}")
+
+    # Plot
+    plt.figure(figsize=(8, 4))
+    plt.bar(range(len(vals)), vals)
+    ax = plt.gca()
+    ax.set_xticks(range(len(vals)))
+    ax.set_xticklabels(bar_labels, rotation=90, fontsize=10)
     plt.title(f"{title_prefix}Last step attention (sample {sample_idx})")
-    plt.xlabel("Key index j (past events)"); plt.ylabel("Attention weight")
-    if labels is not None:
-        ax = plt.gca()
-        ax.set_xticks(range(len(labels))); ax.set_xticklabels(labels, rotation=90, fontsize=8)
-    plt.tight_layout(); plt.savefig(Path(out_dir)/f"sample{sample_idx}_last_step_bar.png", dpi=160); plt.close()
+    plt.xlabel("Key index j (past events)")
+    plt.ylabel("Attention weight")
+    plt.tight_layout()
+    plt.savefig(Path(out_dir) / f"sample{sample_idx}_last_step_bar.png", dpi=160)
+    plt.close()
+
     return str(out_dir)
 
 def render_attention_entry(scores_np, out_dir, sample_idx=0, batch_txt=None, labels_csv=None, pad_token="<pad>", align_right=True, title_prefix=""):
