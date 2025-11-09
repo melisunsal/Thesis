@@ -9,7 +9,7 @@ def main():
     scores_path = base_dir / "block_mha_scores.npy"
     batch_txt_path = base_dir / "batch_prefixes.txt"
     case_ids_path = base_dir / "batch_case_ids.txt"
-
+    output_dir = Path("./outputs/Helpdesk/attentionMaps")
     # Yükle
     scores = np.load(scores_path)
     print(f"Loaded attention scores: shape={scores.shape}")
@@ -38,7 +38,7 @@ def main():
     # Görselleştir (aynı klasöre kaydedilecek)
     render_attention_entry(
         scores_np=scores,
-        out_dir=str(base_dir),
+        out_dir=str(output_dir),
         sample_idx=sample_idx,
         batch_txt=str(batch_txt_path) if batch_txt_path.exists() else None,
         pad_token="[PAD]",
