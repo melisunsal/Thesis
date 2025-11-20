@@ -23,6 +23,8 @@ def normalize_event_csv(in_path: str,
     - Virgül/; gibi ayırıcıları otomatik dener.
     """
     in_p = Path(in_path)
+    if not in_p.exists():
+        raise FileNotFoundError(f"Input file not found: {in_p}")
     if out_path is None:
         out_p = in_p.with_name(in_p.stem + "_normalized.csv")
     else:
@@ -87,7 +89,7 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument("--dataset", 
     type=str, 
-    default="Helpdesk",
+    default="BPIC2012-ALL",
     help="dataset name")
 
 parser.add_argument("--dir_path", 
@@ -97,7 +99,7 @@ parser.add_argument("--dir_path",
 
 parser.add_argument("--raw_log_file", 
     type=str, 
-    default="./datasets/Helpdesk/finale.csv",
+    default="./datasets/BPIC2012-ALL/events.csv",
     help="path to raw csv log file")
 
 parser.add_argument("--task", 

@@ -5,11 +5,11 @@ from attention_viz_utils import render_attention_entry
 
 def main():
     # Sabit dizin
-    base_dir = Path("./outputs/Helpdesk")
+    base_dir = Path("./outputs/BPIC2012-O")
     scores_path = base_dir / "block_mha_scores.npy"
     batch_txt_path = base_dir / "batch_prefixes.txt"
     case_ids_path = base_dir / "batch_case_ids.txt"
-    output_dir = Path("./outputs/Helpdesk/attentionMaps")
+    output_dir = Path("./outputs/BPIC2012-O/attentionMaps")
     # Yükle
     scores = np.load(scores_path)
     print(f"Loaded attention scores: shape={scores.shape}")

@@ -9,6 +9,7 @@ from tensorflow.keras import mixed_precision
 from collections import defaultdict, deque
 
 from explainers.shap_current_batch import run_kernel_shap_for_batch
+from explainers.shap_masker_explainer import build_background_prefixes, run_shap
 from visualizeAttention.attention_viz_utils import save_batch_metadata
 mixed_precision.set_global_policy("float32")
 tf.config.run_functions_eagerly(True)
@@ -52,7 +53,7 @@ def hook_mha_instance(mha_layer: tf.keras.layers.MultiHeadAttention):
 
     def wrapped_call(self, query, value, key=None, attention_mask=None, **kwargs):
         # KERAS'a causal'ı bırakmıyoruz; kendimiz oluşturacağız
-        kwargs["use_causal_mask"] = False
+        kwargs["use_causal_mask"] = True
         kwargs["return_attention_scores"] = True
 
         if CURRENT_KEY_MASK is not None:
@@ -152,7 +153,7 @@ def print_batch(dl, X, use_df, xdict, ydict, maxlen):
 
 def main(with_shap_current_batch):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dataset", default="Helpdesk")
+    ap.add_argument("--dataset", default="BPIC2012-O")
     ap.add_argument("--ckpt_dir", default="./models")
     ap.add_argument("--out_dir", default="./outputs")
     ap.add_argument("--batch_size", type=int, default=32)
@@ -199,10 +200,9 @@ def main(with_shap_current_batch):
     # Forward once to get logits (for targets)
     logits = model(X, training=False).numpy()  # (B, T, C)
 
-    # 3) prefix metadata for explanation alignment
     global CURRENT_KEY_MASK
-    PAD_ID = 0  # ya da: PAD_ID = xdict.get("<pad>", 0)
-    CURRENT_KEY_MASK = (X != PAD_ID)  # [B, T] bool
+    PAD_ID = xdict.get("[PAD]") or xdict.get("<pad>") or xdict.get("PAD") or 0
+    CURRENT_KEY_MASK = (X != PAD_ID)
 
     # 4) hook the first MHA inside the transformer block
     block = find_block(model)
@@ -250,11 +250,20 @@ def main(with_shap_current_batch):
         align_right=True,
     )
 
-    run_dir = os.path.join("outputs", args.dataset, "shap")  # or however you name runs
     xdict_json = os.path.join("datasets", args.dataset, "processed", "xdict.json")  # adjust if needed
 
-    # Optional: choose a small background set (faster)
-    X_bg = X[:min(16, X.shape[0])]
+    # basit fallback: batch’in içinden arka plan
+    lengths_all = (X_all != PAD_ID).sum(axis=1)
+
+    X_bg = build_background_prefixes(
+        X_all,
+        lengths_all,
+        y_pred=None,
+        k_per_decile=4,
+        max_bg=40,
+        rng_seed=123
+    )
+    run_dir = os.path.join("outputs", args.dataset, "shap")
 
     _ = run_kernel_shap_for_batch(
         model,
@@ -262,10 +271,72 @@ def main(with_shap_current_batch):
         xdict = xdict,
         run_dir=run_dir,
         background_X=X_bg,
-        nsamples="auto",  # can set to 200–500 for more stable values
+        nsamples=250,  # can set to 200–500 for more stable values
         link_logit=True,  # explain logits
         class_mode="predicted",  # explain the predicted next activity
     )
+
+    # run_dir = os.path.join("outputs", args.dataset, "shap_too_much_sample")
+    #
+    # _ = run_kernel_shap_for_batch(
+    #     model,
+    #     X_batch=X,
+    #     xdict=xdict,
+    #     run_dir=run_dir,
+    #     background_X=X_bg,
+    #     nsamples=4096,  # can set to 200–500 for more stable values
+    #     link_logit=True,  # explain logits
+    #     class_mode="predicted",  # explain the predicted next activity
+    # )
+
+    X_bg = X[:min(32, X.shape[0])]
+    run_dir = os.path.join("outputs", args.dataset, "shap_small_background")
+
+    _ = run_kernel_shap_for_batch(
+        model,
+        X_batch=X,
+        xdict=xdict,
+        run_dir=run_dir,
+        background_X=X_bg,
+        nsamples=250,  # can set to 200–500 for more stable values
+        link_logit=True,  # explain logits
+        class_mode="predicted",  # explain the predicted next activity
+    )
+
+    # run_dir = os.path.join("outputs", args.dataset, "shap_small_background_big_sample")
+    # _ = run_kernel_shap_for_batch(
+    #     model,
+    #     X_batch=X,
+    #     xdict=xdict,
+    #     run_dir=run_dir,
+    #     background_X=X_bg,
+    #     nsamples=4096,  # can set to 200–500 for more stable values
+    #     link_logit=True,  # explain logits
+    #     class_mode="predicted",  # explain the predicted next activity
+    # )
+
+
+    # run_shap(
+    #     model,
+    #     X_batch=X,
+    #     xdict=xdict,
+    #     run_dir="./outputs/Helpdesk/shap_subsequence",
+    #     background_X=X_bg,
+    #     nsamples=4096,
+    #     masker_mode="subsequence",
+    #     verify=True
+    # )
+    #
+    # run_shap(
+    #     model,
+    #     X_batch=X,
+    #     xdict=xdict,
+    #     run_dir="./outputs/Helpdesk/shap_causalprefix",
+    #     background_X=X_bg,
+    #     nsamples=4096,
+    #     masker_mode="causal_prefix",
+    #     verify=True,
+    # )
 
 
 if __name__ == "__main__":

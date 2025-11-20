@@ -123,6 +123,42 @@ class CausalPrefixMasker:
             out[i, cut:] = self.pad_id
 
         return out
+def build_background_prefixes(X_all, lengths, y_pred=None, k_per_decile=3, max_bg=40, rng_seed=123):
+    """
+    X_all: np.ndarray [N, T] of token ids from the test set (or train+valid)
+    lengths: np.ndarray [N,] valid prefix lengths for each row
+    y_pred: optional np.ndarray [N,] predicted class per row, used to avoid one-class dominance
+    """
+    import numpy as np
+    rng = np.random.default_rng(rng_seed)
+
+    # make deciles over lengths
+    qs = np.quantile(lengths, np.linspace(0, 1, 11), interpolation="nearest")
+    idxs = []
+    for a, b in zip(qs[:-1], qs[1:]):
+        mask = (lengths >= a) & (lengths <= b)
+        cand = np.where(mask)[0]
+        if cand.size == 0:
+            continue
+        pick = rng.choice(cand, size=min(k_per_decile, cand.size), replace=False)
+        idxs.extend(pick.tolist())
+
+    idxs = np.array(list(dict.fromkeys(idxs)))  # unique, keep order
+
+    # optional light balancing by predicted class
+    if y_pred is not None and idxs.size > 0:
+        taken = []
+        for c in np.unique(y_pred[idxs]):
+            cand = idxs[y_pred[idxs] == c]
+            take = cand[: max(1, len(cand)//4)]
+            taken.extend(take.tolist())
+        idxs = np.array(list(dict.fromkeys(taken))) or idxs
+
+    # cap size
+    if idxs.size > max_bg:
+        idxs = idxs[:max_bg]
+
+    return X_all[idxs]
 
 
 def run_kernel_shap_for_batch(
@@ -172,19 +208,16 @@ def run_kernel_shap_for_batch(
     else:
         raise ValueError("class_mode must be 'predicted' or an int")
 
-    scorer = build_target_selector(model, pad_id, as_logit=link_logit)
-
     fullvec_model = model_laststep_logits(model, pad_id)
 
     #masker = SuffixKeepMasker(pad_id=pad_id, T=T)
     masker = CausalPrefixMasker(pad_id=pad_id, T=T)
 
     explainer = shap.Explainer(
-        #model=lambda X: scorer(np.array(X, dtype=np.int32), c_star[:len(X)]),
-        model = fullvec_model,
+        model = model,
         masker=masker,
         data=background_X,  # <- small valid prefixes
-        algorithm="auto",  # <- SHAP decides (PermutationExplainer under the hood)
+        algorithm="permutation",  # <- SHAP decides (PermutationExplainer under the hood)
         link=shap.links.identity if link_logit else shap.links.logit,
     )
 
@@ -192,8 +225,6 @@ def run_kernel_shap_for_batch(
         explanation = explainer(X_batch, max_evals=nsamples)
     else:
         explanation = explainer(X_batch)
-
-    shap_vals = explanation.values
 
     vals = explanation.values  # (B, T, C)
     idx_b = np.arange(B)
