@@ -2,7 +2,7 @@ import processtransformer
 import pandas as pd
 from datetime import datetime, timedelta
 import random
-import tensorflow, sys, platform
+from explain_with_llm import explain_prefix
 
 
 def create_mock():
@@ -28,6 +28,23 @@ def create_mock():
 
 
 if __name__ == '__main__':
-    #create_mock()
-    print("machine:", platform.machine())
-    print("python :", sys.version)
+
+    # # GPT version
+    # exp_gpt = explain_prefix(
+    #     dataset_name="BPIC2012-O",
+    #     out_dir="./outputs",
+    #     prefix_index=10,
+    #     backend="gpt",
+    #     llm_model_name=None,  # will use OPENAI_MODEL_NAME or default
+    # )
+    # print(exp_gpt)
+
+    # LLMama version (once you have the endpoint)
+    exp_llmama = explain_prefix(
+        dataset_name="BPIC2012-O",
+        out_dir="./outputs",
+        prefix_index=10,
+        backend="llmama",
+        llm_model_name=None,  # will use LLMAMA_MODEL_NAME or default
+    )
+    print(exp_llmama)

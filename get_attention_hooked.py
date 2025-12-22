@@ -1,4 +1,5 @@
 # get_attention_hooked.py
+import json
 import os, argparse, numpy as np
 import tensorflow as tf
 from processtransformer import constants
@@ -151,6 +152,115 @@ def print_batch(dl, X, use_df, xdict, ydict, maxlen):
         print(f"Index {df_index:>4} | Case {cid:<5} | Prefix: {decoded}")
 
 
+
+def _softmax_1d(x: np.ndarray) -> np.ndarray:
+    """Numerically stable softmax for a 1D numpy array."""
+    x = x.astype("float64")
+    x = x - np.max(x)
+    ex = np.exp(x)
+    s = ex.sum()
+    if s == 0.0:
+        return np.ones_like(ex) / max(len(ex), 1)
+    return ex / s
+
+
+def save_batch_predictions(
+    out_dir: str,
+    logits: np.ndarray,          # shape [B, C] or [B, T, C]
+    X: np.ndarray,               # shape [B, T]
+    ydict: dict,
+    case_ids,
+    prefix_activities,
+    pad_id: int,
+    top_k: int = 3,
+):
+
+    inv_ydict = {v: k for k, v in ydict.items()}  # class_index -> label
+
+    if logits.ndim == 3:
+        B, T, C = logits.shape
+        has_time_dim = True
+    elif logits.ndim == 2:
+        B, C = logits.shape
+        T = None
+        has_time_dim = False
+    else:
+        raise ValueError(
+            f"Expected logits with shape [B, C] or [B, T, C], got {logits.shape}"
+        )
+
+    # prefix length: PAD olmayan token sayısı
+    lengths = (X != pad_id).sum(axis=1)  # [B]
+
+    preds = []
+    for b in range(B):
+        L = int(lengths[b])
+        if L <= 0:
+            continue
+
+        # logits seçimi
+        if has_time_dim:
+            if L > logits.shape[1]:
+                raise ValueError(
+                    f"prefix length {L} exceeds logits time dim {logits.shape[1]}"
+                )
+            last_logits = logits[b, L - 1]   # [C]
+        else:
+            last_logits = logits[b]          # [C]
+
+        probs = _softmax_1d(last_logits)     # [C]
+
+        top_idx = int(np.argmax(probs))
+        top_prob = float(probs[top_idx])
+        top_label = inv_ydict[top_idx]
+
+        # top-k alternatifler (en iyi tahmin hariç)
+        sorted_idx = np.argsort(probs)[::-1]
+        alternatives = []
+        for idx in sorted_idx:
+            idx = int(idx)
+            if idx == top_idx:
+                continue
+            alternatives.append({
+                "class_index": int(idx),
+                "label": inv_ydict[idx],
+                "prob": float(probs[idx]),
+            })
+            if len(alternatives) >= top_k:
+                break
+
+        # case_id ve prefix'i JSON uyumlu hale getir
+        cid = case_ids[b]
+        # Numpy türünü normal int/str yap
+        if isinstance(cid, (np.generic, np.integer)):
+            cid = int(cid)
+
+        # prefix_activities[b] numpy array ise listeye çevir
+        pref = prefix_activities[b]
+        if isinstance(pref, np.ndarray):
+            pref = pref.tolist()
+
+        preds.append({
+            "batch_index": int(b),
+            "case_id": cid,
+            "prefix_len": int(L),
+            "prefix_activities": pref,
+            "predicted_index": int(top_idx),
+            "predicted_label": top_label,
+            "pred_prob": float(top_prob),
+            "top_alternatives": alternatives,
+        })
+
+    payload = {
+        "predictions": preds,
+    }
+
+    out_path = os.path.join(out_dir, "batch_predictions.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+    print(f"✅ Saved batch predictions to: {out_path}")
+
+
 def main(with_shap_current_batch):
     ap = argparse.ArgumentParser()
     ap.add_argument("--dataset", default="BPIC2012-O")
@@ -204,6 +314,17 @@ def main(with_shap_current_batch):
     PAD_ID = xdict.get("[PAD]") or xdict.get("<pad>") or xdict.get("PAD") or 0
     CURRENT_KEY_MASK = (X != PAD_ID)
 
+    save_batch_predictions(
+        out_dir=outdir,
+        logits=logits,
+        X=X,
+        ydict=ydict,
+        case_ids=case_ids,
+        prefix_activities=decoded_prefixes,
+        pad_id=PAD_ID,
+        top_k=3,
+    )
+
     # 4) hook the first MHA inside the transformer block
     block = find_block(model)
     ok, hooked_mha, where = find_and_hook_first_mha_in_block(block)
@@ -250,33 +371,46 @@ def main(with_shap_current_batch):
         align_right=True,
     )
 
-    xdict_json = os.path.join("datasets", args.dataset, "processed", "xdict.json")  # adjust if needed
-
-    # basit fallback: batch’in içinden arka plan
-    lengths_all = (X_all != PAD_ID).sum(axis=1)
-
-    X_bg = build_background_prefixes(
-        X_all,
-        lengths_all,
-        y_pred=None,
-        k_per_decile=4,
-        max_bg=40,
-        rng_seed=123
-    )
-    run_dir = os.path.join("outputs", args.dataset, "shap")
-
-    _ = run_kernel_shap_for_batch(
-        model,
-        X_batch=X,
-        xdict = xdict,
-        run_dir=run_dir,
-        background_X=X_bg,
-        nsamples=250,  # can set to 200–500 for more stable values
-        link_logit=True,  # explain logits
-        class_mode="predicted",  # explain the predicted next activity
-    )
-
-    # run_dir = os.path.join("outputs", args.dataset, "shap_too_much_sample")
+    # xdict_json = os.path.join("datasets", args.dataset, "processed", "xdict.json")  # adjust if needed
+    #
+    # lengths_all = (X_all != PAD_ID).sum(axis=1)
+    #
+    # X_bg = build_background_prefixes(
+    #     X_all,
+    #     lengths_all,
+    #     y_pred=None,
+    #     k_per_decile=4,
+    #     max_bg=40,
+    #     rng_seed=123
+    # )
+    # run_dir = os.path.join("outputs", args.dataset, "shap")
+    #
+    # _ = run_kernel_shap_for_batch(
+    #     model,
+    #     X_batch=X,
+    #     xdict = xdict,
+    #     run_dir=run_dir,
+    #     background_X=X_bg,
+    #     nsamples=250,  # can set to 200–500 for more stable values
+    #     link_logit=True,  # explain logits
+    #     class_mode="predicted",  # explain the predicted next activity
+    # )
+    #
+    # # run_dir = os.path.join("outputs", args.dataset, "shap_too_much_sample")
+    # #
+    # # _ = run_kernel_shap_for_batch(
+    # #     model,
+    # #     X_batch=X,
+    # #     xdict=xdict,
+    # #     run_dir=run_dir,
+    # #     background_X=X_bg,
+    # #     nsamples=4096,  # can set to 200–500 for more stable values
+    # #     link_logit=True,  # explain logits
+    # #     class_mode="predicted",  # explain the predicted next activity
+    # # )
+    #
+    # X_bg = X[:min(32, X.shape[0])]
+    # run_dir = os.path.join("outputs", args.dataset, "shap_small_background")
     #
     # _ = run_kernel_shap_for_batch(
     #     model,
@@ -284,59 +418,45 @@ def main(with_shap_current_batch):
     #     xdict=xdict,
     #     run_dir=run_dir,
     #     background_X=X_bg,
-    #     nsamples=4096,  # can set to 200–500 for more stable values
+    #     nsamples=250,  # can set to 200–500 for more stable values
     #     link_logit=True,  # explain logits
     #     class_mode="predicted",  # explain the predicted next activity
-    # )
-
-    X_bg = X[:min(32, X.shape[0])]
-    run_dir = os.path.join("outputs", args.dataset, "shap_small_background")
-
-    _ = run_kernel_shap_for_batch(
-        model,
-        X_batch=X,
-        xdict=xdict,
-        run_dir=run_dir,
-        background_X=X_bg,
-        nsamples=250,  # can set to 200–500 for more stable values
-        link_logit=True,  # explain logits
-        class_mode="predicted",  # explain the predicted next activity
-    )
-
-    # run_dir = os.path.join("outputs", args.dataset, "shap_small_background_big_sample")
-    # _ = run_kernel_shap_for_batch(
-    #     model,
-    #     X_batch=X,
-    #     xdict=xdict,
-    #     run_dir=run_dir,
-    #     background_X=X_bg,
-    #     nsamples=4096,  # can set to 200–500 for more stable values
-    #     link_logit=True,  # explain logits
-    #     class_mode="predicted",  # explain the predicted next activity
-    # )
-
-
-    # run_shap(
-    #     model,
-    #     X_batch=X,
-    #     xdict=xdict,
-    #     run_dir="./outputs/Helpdesk/shap_subsequence",
-    #     background_X=X_bg,
-    #     nsamples=4096,
-    #     masker_mode="subsequence",
-    #     verify=True
     # )
     #
-    # run_shap(
-    #     model,
-    #     X_batch=X,
-    #     xdict=xdict,
-    #     run_dir="./outputs/Helpdesk/shap_causalprefix",
-    #     background_X=X_bg,
-    #     nsamples=4096,
-    #     masker_mode="causal_prefix",
-    #     verify=True,
-    # )
+    # # run_dir = os.path.join("outputs", args.dataset, "shap_small_background_big_sample")
+    # # _ = run_kernel_shap_for_batch(
+    # #     model,
+    # #     X_batch=X,
+    # #     xdict=xdict,
+    # #     run_dir=run_dir,
+    # #     background_X=X_bg,
+    # #     nsamples=4096,  # can set to 200–500 for more stable values
+    # #     link_logit=True,  # explain logits
+    # #     class_mode="predicted",  # explain the predicted next activity
+    # # )
+    #
+    #
+    # # run_shap(
+    # #     model,
+    # #     X_batch=X,
+    # #     xdict=xdict,
+    # #     run_dir="./outputs/Helpdesk/shap_subsequence",
+    # #     background_X=X_bg,
+    # #     nsamples=4096,
+    # #     masker_mode="subsequence",
+    # #     verify=True
+    # # )
+    # #
+    # # run_shap(
+    # #     model,
+    # #     X_batch=X,
+    # #     xdict=xdict,
+    # #     run_dir="./outputs/Helpdesk/shap_causalprefix",
+    # #     background_X=X_bg,
+    # #     nsamples=4096,
+    # #     masker_mode="causal_prefix",
+    # #     verify=True,
+    # # )
 
 
 if __name__ == "__main__":
