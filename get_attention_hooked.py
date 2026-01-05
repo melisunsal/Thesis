@@ -1,6 +1,23 @@
 # get_attention_hooked.py
+"""
+Extract attention scores from a trained ProcessTransformer model.
+
+This script:
+1. Loads a trained model checkpoint
+2. Hooks into the MultiHeadAttention layer to capture attention scores
+3. Performs a single forward pass to get both logits and attention
+4. Saves predictions, attention scores, and metadata for downstream analysis
+
+Key fixes from original:
+- Eliminated global state (CURRENT_KEY_MASK)
+- Single forward pass for both logits and attention
+- Instance-based mask passing to hooked MHA
+"""
+
 import json
-import os, argparse, numpy as np
+import os
+import argparse
+import numpy as np
 import tensorflow as tf
 from processtransformer import constants
 from processtransformer.data import loader
@@ -9,37 +26,37 @@ from types import MethodType
 from tensorflow.keras import mixed_precision
 from collections import defaultdict, deque
 
-from explainers.shap_current_batch import run_kernel_shap_for_batch
-from explainers.shap_masker_explainer import build_background_prefixes, run_shap
 from visualizeAttention.attention_viz_utils import save_batch_metadata
+
 mixed_precision.set_global_policy("float32")
 tf.config.run_functions_eagerly(True)
 
 
-CURRENT_KEY_MASK = None  # shape [B, T], True = real token, False = [PAD]
-
-
 def build_model(maxlen, vocab_size, num_out):
+    """Build the ProcessTransformer model architecture."""
     return transformer.get_next_activity_model(
         max_case_length=maxlen, vocab_size=vocab_size, output_dim=num_out
     )
 
 
 def find_block(model):
+    """Find the TransformerBlock layer in the model."""
     try:
         return model.get_layer("transformer_block")
     except Exception:
-        for l in model.layers:
-            if l.__class__.__name__.lower().startswith("transformerblock"):
-                return l
-        raise RuntimeError("TransformerBlock couldn't be found.")
+        for layer in model.layers:
+            if layer.__class__.__name__.lower().startswith("transformerblock"):
+                return layer
+        raise RuntimeError("TransformerBlock could not be found in model.")
 
 
 def iter_submodules(layer):
+    """Iterate through all submodules of a layer."""
     visited, stack = set(), [layer]
     while stack:
         cur = stack.pop()
-        if id(cur) in visited: continue
+        if id(cur) in visited:
+            continue
         visited.add(id(cur))
         yield cur
 
@@ -50,46 +67,56 @@ def iter_submodules(layer):
 
 
 def hook_mha_instance(mha_layer: tf.keras.layers.MultiHeadAttention):
+    """
+    Hook into MultiHeadAttention to capture attention scores.
+
+    Uses instance attribute (_current_key_mask) instead of global state
+    for thread-safety and clarity.
+    """
     orig_call = mha_layer.call
+    mha_layer._current_key_mask = None  # Instance attribute for mask
+    mha_layer.last_scores = None  # Will store attention scores
 
     def wrapped_call(self, query, value, key=None, attention_mask=None, **kwargs):
-        # KERAS'a causal'ı bırakmıyoruz; kendimiz oluşturacağız
+        # Enable causal masking and attention score return
         kwargs["use_causal_mask"] = True
         kwargs["return_attention_scores"] = True
 
-        if CURRENT_KEY_MASK is not None:
-            # Mevcut çağrının mini-batch ve uzunluklarını al
+        # Build attention mask from instance attribute
+        current_mask = getattr(self, "_current_key_mask", None)
+
+        if current_mask is not None:
             cur_B = tf.shape(query)[0]
-            Tq    = tf.shape(query)[-2]   # query length
-            Tk    = tf.shape(value)[-2]   # key length
+            Tq = tf.shape(query)[-2]   # query length
+            Tk = tf.shape(value)[-2]   # key length
 
-            base = tf.convert_to_tensor(CURRENT_KEY_MASK, dtype=tf.bool)  # [B, T]
-            qv = base[:cur_B, :Tq]   # [B, Tq]  True=gerçek token
-            kv = base[:cur_B, :Tk]   # [B, Tk]  True=gerçek token
+            # Slice mask to current batch and sequence lengths
+            base = current_mask  # [B, T], True = real token
+            qv = base[:cur_B, :Tq]  # [B, Tq]
+            kv = base[:cur_B, :Tk]  # [B, Tk]
 
-            # Query ve Key geçerlilik maskelerini 3D'ye genişlet ve kesiştir
+            # Expand to 3D and compute intersection
             q3 = tf.expand_dims(qv, axis=-1)   # [B, Tq, 1]
-            k3 = tf.expand_dims(kv, axis=1)    # [B, 1,  Tk]
+            k3 = tf.expand_dims(kv, axis=1)    # [B, 1, Tk]
             keep_qk = tf.logical_and(q3, k3)   # [B, Tq, Tk]
 
-            # Causal (alt üçgen) maskeyi biz üretelim
-            causal = tf.linalg.band_part(tf.ones((Tq, Tk), dtype=tf.bool), -1, 0)  # [Tq, Tk]
-            causal = tf.broadcast_to(causal, [cur_B, Tq, Tk])                      # [B, Tq, Tk]
+            # Create causal mask (lower triangular)
+            causal = tf.linalg.band_part(
+                tf.ones((Tq, Tk), dtype=tf.bool), -1, 0
+            )
+            causal = tf.broadcast_to(causal, [cur_B, Tq, Tk])
 
-            # Nihai maske: (query&key geçerli) ∧ (causal)
-            full_mask = tf.logical_and(keep_qk, causal)  # [B, Tq, Tk]
-            attention_mask = full_mask
-        else:
-            attention_mask = None
+            # Combined mask: (query & key valid) AND causal
+            attention_mask = tf.logical_and(keep_qk, causal)
 
         out = orig_call(query, value, key=key, attention_mask=attention_mask, **kwargs)
 
         if isinstance(out, (tuple, list)) and len(out) == 2:
             y, scores = out
-            setattr(self, "last_scores", scores)
+            self.last_scores = scores
             return y
         else:
-            setattr(self, "last_scores", None)
+            self.last_scores = None
             return out
 
     mha_layer.call = MethodType(wrapped_call, mha_layer)
@@ -97,25 +124,77 @@ def hook_mha_instance(mha_layer: tf.keras.layers.MultiHeadAttention):
 
 
 def find_and_hook_first_mha_in_block(block):
+    """Find and hook the first MultiHeadAttention layer in a transformer block."""
+    # Check direct attributes first
     for attr_name, obj in vars(block).items():
         if isinstance(obj, tf.keras.layers.MultiHeadAttention):
             hook_mha_instance(obj)
             return True, obj, attr_name
+
+    # Check submodules
     for sub in iter_submodules(block):
         for attr_name, obj in vars(sub).items():
             if isinstance(obj, tf.keras.layers.MultiHeadAttention):
                 hook_mha_instance(obj)
                 return True, obj, f"{sub.name}.{attr_name}"
+
     return False, None, None
 
 
-def print_batch(dl, X, use_df, xdict, ydict, maxlen):
+def forward_with_attention(model, hooked_mha, X, key_mask):
     """
-    Prints mapping back to DF indices and case ids, and sets
-    global decoded_prefixes, case_ids (used for metadata saving).
-    """
-    global decoded_prefixes, case_ids
+    Single forward pass that captures both logits and attention scores.
 
+    Parameters
+    ----------
+    model : tf.keras.Model
+        The transformer model
+    hooked_mha : MultiHeadAttention
+        The hooked MHA layer (already modified by hook_mha_instance)
+    X : np.ndarray
+        Input token IDs [B, T]
+    key_mask : np.ndarray
+        Boolean mask [B, T], True = real token, False = PAD
+
+    Returns
+    -------
+    logits : np.ndarray
+        Model output logits [B, T, C] or [B, C]
+    attention_scores : np.ndarray
+        Attention scores [B, H, Tq, Tk]
+    """
+    # Set mask in hooked layer for access during forward pass
+    hooked_mha._current_key_mask = tf.convert_to_tensor(key_mask, dtype=tf.bool)
+
+    # Single forward pass - captures both logits and attention
+    logits = model(X, training=False)
+
+    # Get attention scores captured during forward pass
+    attention_scores = getattr(hooked_mha, "last_scores", None)
+
+    # Clean up
+    hooked_mha._current_key_mask = None
+
+    if attention_scores is None:
+        raise RuntimeError(
+            "Attention scores not captured. Ensure MHA layer supports return_attention_scores."
+        )
+
+    return logits.numpy(), attention_scores.numpy()
+
+
+def prepare_batch_data(dl, X, use_df, xdict, ydict, maxlen):
+    """
+    Prepare batch data including decoded prefixes and case IDs.
+
+    Returns
+    -------
+    decoded_prefixes : list of list of str
+        Activity names for each prefix
+    case_ids : list
+        Case ID for each sample
+    """
+    # Get unshuffled data for mapping
     X_unshuf, _ = dl.prepare_data_next_activity(
         use_df, xdict, ydict, maxlen, shuffle=False
     )
@@ -123,34 +202,50 @@ def print_batch(dl, X, use_df, xdict, ydict, maxlen):
     def signature(row):
         return tuple(int(t) for t in row if int(t) != 0)
 
+    # Build signature to index mapping
     sig2idxs = defaultdict(deque)
     for i, row in enumerate(X_unshuf):
         sig2idxs[signature(row)].append(i)
 
+    # Map shuffled batch back to original indices
     orig_idx_for_batch = []
     for row in X:
         sig = signature(row)
         if not sig2idxs[sig]:
-            raise RuntimeError("Eşleşmeyen satır imzası; aynı use_df/maxlen/xdict ile çağırdığından emin ol.")
+            raise RuntimeError(
+                "Row signature mismatch. Ensure same use_df/maxlen/xdict."
+            )
         orig_idx_for_batch.append(sig2idxs[sig].popleft())
     orig_idx_for_batch = np.array(orig_idx_for_batch)
 
+    # Decode tokens to activity names
     inv_xdict = {v: k for k, v in xdict.items()}
-    case_col = "caseid" if "caseid" in use_df.columns else ("case_id" if "case_id" in use_df.columns else None)
-    if case_col is None:
-        raise KeyError("case id kolonu bulunamadı (caseid / case_id).")
 
-    decoded_prefixes = [[inv_xdict[int(t)] for t in seq if int(t) != 0] for seq in X]
+    # Find case ID column
+    case_col = None
+    for col_name in ["caseid", "case_id", "Case ID", "CaseID"]:
+        if col_name in use_df.columns:
+            case_col = col_name
+            break
+    if case_col is None:
+        raise KeyError("Case ID column not found (tried: caseid, case_id, Case ID, CaseID)")
+
+    decoded_prefixes = [
+        [inv_xdict[int(t)] for t in seq if int(t) != 0]
+        for seq in X
+    ]
     case_ids = [use_df.iloc[int(i)][case_col] for i in orig_idx_for_batch]
 
-    print("\n--- BATCH (shuffled) - Doğru DF index + Case + decoded prefix ---")
+    # Print batch info
+    print("\n--- BATCH INFO ---")
     for i, seq in enumerate(X):
         orig_i = int(orig_idx_for_batch[i])
         df_index = use_df.index[orig_i]
-        cid = use_df.iloc[orig_i][case_col]
-        decoded = [inv_xdict[int(t)] for t in seq if int(t) != 0]
+        cid = case_ids[i]
+        decoded = decoded_prefixes[i]
         print(f"Index {df_index:>4} | Case {cid:<5} | Prefix: {decoded}")
 
+    return decoded_prefixes, case_ids
 
 
 def _softmax_1d(x: np.ndarray) -> np.ndarray:
@@ -166,16 +261,16 @@ def _softmax_1d(x: np.ndarray) -> np.ndarray:
 
 def save_batch_predictions(
     out_dir: str,
-    logits: np.ndarray,          # shape [B, C] or [B, T, C]
-    X: np.ndarray,               # shape [B, T]
+    logits: np.ndarray,
+    X: np.ndarray,
     ydict: dict,
     case_ids,
     prefix_activities,
     pad_id: int,
     top_k: int = 3,
 ):
-
-    inv_ydict = {v: k for k, v in ydict.items()}  # class_index -> label
+    """Save batch predictions to JSON file."""
+    inv_ydict = {v: k for k, v in ydict.items()}
 
     if logits.ndim == 3:
         B, T, C = logits.shape
@@ -189,7 +284,6 @@ def save_batch_predictions(
             f"Expected logits with shape [B, C] or [B, T, C], got {logits.shape}"
         )
 
-    # prefix length: PAD olmayan token sayısı
     lengths = (X != pad_id).sum(axis=1)  # [B]
 
     preds = []
@@ -198,23 +292,23 @@ def save_batch_predictions(
         if L <= 0:
             continue
 
-        # logits seçimi
+        # Select logits for last valid timestep
         if has_time_dim:
             if L > logits.shape[1]:
                 raise ValueError(
-                    f"prefix length {L} exceeds logits time dim {logits.shape[1]}"
+                    f"Prefix length {L} exceeds logits time dim {logits.shape[1]}"
                 )
-            last_logits = logits[b, L - 1]   # [C]
+            last_logits = logits[b, L - 1]
         else:
-            last_logits = logits[b]          # [C]
+            last_logits = logits[b]
 
-        probs = _softmax_1d(last_logits)     # [C]
+        probs = _softmax_1d(last_logits)
 
         top_idx = int(np.argmax(probs))
         top_prob = float(probs[top_idx])
         top_label = inv_ydict[top_idx]
 
-        # top-k alternatifler (en iyi tahmin hariç)
+        # Get top-k alternatives (excluding top prediction)
         sorted_idx = np.argsort(probs)[::-1]
         alternatives = []
         for idx in sorted_idx:
@@ -229,13 +323,11 @@ def save_batch_predictions(
             if len(alternatives) >= top_k:
                 break
 
-        # case_id ve prefix'i JSON uyumlu hale getir
+        # Make JSON-serializable
         cid = case_ids[b]
-        # Numpy türünü normal int/str yap
         if isinstance(cid, (np.generic, np.integer)):
             cid = int(cid)
 
-        # prefix_activities[b] numpy array ise listeye çevir
         pref = prefix_activities[b]
         if isinstance(pref, np.ndarray):
             pref = pref.tolist()
@@ -251,69 +343,139 @@ def save_batch_predictions(
             "top_alternatives": alternatives,
         })
 
-    payload = {
-        "predictions": preds,
-    }
+    payload = {"predictions": preds}
 
     out_path = os.path.join(out_dir, "batch_predictions.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
-    print(f"✅ Saved batch predictions to: {out_path}")
+    print(f"Saved batch predictions to: {out_path}")
 
 
-def main(with_shap_current_batch):
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--dataset", default="BPIC2012-O")
-    ap.add_argument("--ckpt_dir", default="./models")
-    ap.add_argument("--out_dir", default="./outputs")
-    ap.add_argument("--batch_size", type=int, default=32)
+def save_attention_scores(out_dir: str, scores_np: np.ndarray):
+    """Save attention scores to files."""
+    np.save(os.path.join(out_dir, "block_mha_scores.npy"), scores_np)
+
+    # Save CSV heatmaps for first sample's heads
+    if scores_np.shape[0] >= 1 and scores_np.shape[1] >= 1:
+        np.savetxt(
+            os.path.join(out_dir, "block_mha_head0_heatmap.csv"),
+            scores_np[0, 0],
+            delimiter=",",
+        )
+    if scores_np.shape[0] >= 1 and scores_np.shape[1] >= 2:
+        np.savetxt(
+            os.path.join(out_dir, "block_mha_head1_heatmap.csv"),
+            scores_np[0, 1],
+            delimiter=",",
+        )
+
+    print(f"Saved attention scores to: {out_dir}")
+
+
+def main():
+    """Main entry point for attention extraction."""
+    ap = argparse.ArgumentParser(
+        description="Extract attention scores from ProcessTransformer"
+    )
+    ap.add_argument("--dataset", default="BPIC2012-O", help="Dataset name")
+    ap.add_argument("--ckpt_dir", default="./models", help="Model checkpoint directory")
+    ap.add_argument("--out_dir", default="./outputs", help="Output directory")
+    ap.add_argument("--batch_size", type=int, default=32, help="Batch size to process")
     args = ap.parse_args()
 
-    # Use a dataset-scoped output dir for all artifacts
+    # Setup output directory
     outdir = os.path.join(args.out_dir, args.dataset)
     os.makedirs(outdir, exist_ok=True)
 
-    # 1) data
+    # ==========================================================================
+    # 1) Load data
+    # ==========================================================================
+    print(f"\n{'='*60}")
+    print(f"Loading data for dataset: {args.dataset}")
+    print(f"{'='*60}")
+
     dl = loader.LogsDataLoader(name=args.dataset)
     train_df, test_df, xdict, ydict, maxlen, vocab, num_out = dl.load_data(
         constants.Task.NEXT_ACTIVITY
     )
+
     use_df = test_df if len(test_df) > 0 else train_df
-    X_all, _ = dl.prepare_data_next_activity(use_df, xdict, ydict, maxlen)  # full set
-    X = X_all[: args.batch_size].astype("int32")  # batch to explain
+    X_all, _ = dl.prepare_data_next_activity(use_df, xdict, ydict, maxlen)
+    X = X_all[: args.batch_size].astype("int32")
 
-    print_batch(dl, X, use_df, xdict, ydict, maxlen)
+    # Prepare batch metadata
+    decoded_prefixes, case_ids = prepare_batch_data(
+        dl, X, use_df, xdict, ydict, maxlen
+    )
 
-    # 2) model + weights
+    # ==========================================================================
+    # 2) Build and load model
+    # ==========================================================================
+    print(f"\n{'='*60}")
+    print("Building and loading model")
+    print(f"{'='*60}")
+
     vocab_size = len(vocab) if isinstance(vocab, (dict, list, tuple)) else int(vocab)
     model = build_model(maxlen, vocab_size, num_out)
 
-    ckpt_dir = os.path.join(args.ckpt_dir, args.dataset)  # ./models/Helpdesk
-    latest = tf.train.latest_checkpoint(ckpt_dir)  # e.g., ".../next_activity_ckpt"
-    print("latest ckpt:", latest)  # must NOT be None
-
-    ckpt = tf.train.Checkpoint(model=model)
-    status = ckpt.restore(latest)
-    try:
-        status.assert_consumed()
-        print("✅ All variables restored.")
-    except Exception:
-        status.expect_partial()
-        print("ℹ️ Partial restore (some vars unmatched).")
+    ckpt_dir = os.path.join(args.ckpt_dir, args.dataset)
+    latest = tf.train.latest_checkpoint(ckpt_dir)
+    print(f"Latest checkpoint: {latest}")
 
     if latest:
-        print(f"[info] loading weights from: {latest}")
+        ckpt = tf.train.Checkpoint(model=model)
+        status = ckpt.restore(latest)
+        try:
+            status.assert_consumed()
+            print("All variables restored successfully.")
+        except Exception:
+            status.expect_partial()
+            print("Partial restore (some variables unmatched).")
+
         model.load_weights(latest).expect_partial()
+        print(f"Loaded weights from: {latest}")
     else:
-        print(f"[warn] no checkpoint found under {ckpt_dir}; using randomly initialized weights.")
+        print(f"WARNING: No checkpoint found under {ckpt_dir}")
+        print("Using randomly initialized weights!")
 
-    # Forward once to get logits (for targets)
-    logits = model(X, training=False).numpy()  # (B, T, C)
+    # ==========================================================================
+    # 3) Hook MHA layer BEFORE forward pass
+    # ==========================================================================
+    print(f"\n{'='*60}")
+    print("Hooking MultiHeadAttention layer")
+    print(f"{'='*60}")
 
-    global CURRENT_KEY_MASK
+    block = find_block(model)
+    ok, hooked_mha, where = find_and_hook_first_mha_in_block(block)
+    if not ok:
+        raise RuntimeError(
+            "Could not find MultiHeadAttention instance in TransformerBlock"
+        )
+    print(f"Hooked MHA at: {where}")
+
+    # ==========================================================================
+    # 4) Single forward pass to get logits AND attention
+    # ==========================================================================
+    print(f"\n{'='*60}")
+    print("Running forward pass with attention capture")
+    print(f"{'='*60}")
+
     PAD_ID = xdict.get("[PAD]") or xdict.get("<pad>") or xdict.get("PAD") or 0
-    CURRENT_KEY_MASK = (X != PAD_ID)
+    key_mask = (X != PAD_ID)  # [B, T], True = real token
 
+    logits, scores_np = forward_with_attention(model, hooked_mha, X, key_mask)
+
+    print(f"Logits shape: {logits.shape}")
+    print(f"Attention scores shape: {scores_np.shape}")
+
+    # ==========================================================================
+    # 5) Save all outputs
+    # ==========================================================================
+    print(f"\n{'='*60}")
+    print("Saving outputs")
+    print(f"{'='*60}")
+
+    # Save predictions
     save_batch_predictions(
         out_dir=outdir,
         logits=logits,
@@ -325,44 +487,10 @@ def main(with_shap_current_batch):
         top_k=3,
     )
 
-    # 4) hook the first MHA inside the transformer block
-    block = find_block(model)
-    ok, hooked_mha, where = find_and_hook_first_mha_in_block(block)
-    if not ok:
-        raise RuntimeError(
-            "TransformerBlock içinde Keras MultiHeadAttention instance'ı bulunamadı."
-        )
-    print(f"Hooked MHA at: {where}")
+    # Save attention scores
+    save_attention_scores(outdir, scores_np)
 
-    # 5) run once more to fill last_scores
-    _ = model.predict(X, verbose=0)
-
-    scores = getattr(hooked_mha, "last_scores", None)
-    if scores is None:
-        raise RuntimeError(
-            "last_scores boş geldi. MHA call return_attention_scores parametresini kabul etmedi mi?"
-        )
-
-    scores_np = scores.numpy()  # [B, H, Tq, Tk]
-    np.save(os.path.join(outdir, "block_mha_scores.npy"), scores_np)
-
-    # save a couple of CSVs only if shapes allow
-    if scores_np.shape[0] >= 1 and scores_np.shape[1] >= 1:
-        np.savetxt(
-            os.path.join(outdir, "block_mha_head0_heatmap.csv"),
-            scores_np[0, 0],
-            delimiter=",",
-        )
-    if scores_np.shape[0] >= 1 and scores_np.shape[1] >= 2:
-        np.savetxt(
-            os.path.join(outdir, "block_mha_head1_heatmap.csv"),
-            scores_np[0, 1],
-            delimiter=",",
-        )
-
-    print(f"✅ Attention scores saved under: {outdir}")
-
-    # 6) save human-readable batch metadata
+    # Save human-readable metadata
     save_batch_metadata(
         out_dir=outdir,
         prefix_texts=[" ".join(p) for p in decoded_prefixes],
@@ -371,93 +499,10 @@ def main(with_shap_current_batch):
         align_right=True,
     )
 
-    # xdict_json = os.path.join("datasets", args.dataset, "processed", "xdict.json")  # adjust if needed
-    #
-    # lengths_all = (X_all != PAD_ID).sum(axis=1)
-    #
-    # X_bg = build_background_prefixes(
-    #     X_all,
-    #     lengths_all,
-    #     y_pred=None,
-    #     k_per_decile=4,
-    #     max_bg=40,
-    #     rng_seed=123
-    # )
-    # run_dir = os.path.join("outputs", args.dataset, "shap")
-    #
-    # _ = run_kernel_shap_for_batch(
-    #     model,
-    #     X_batch=X,
-    #     xdict = xdict,
-    #     run_dir=run_dir,
-    #     background_X=X_bg,
-    #     nsamples=250,  # can set to 200–500 for more stable values
-    #     link_logit=True,  # explain logits
-    #     class_mode="predicted",  # explain the predicted next activity
-    # )
-    #
-    # # run_dir = os.path.join("outputs", args.dataset, "shap_too_much_sample")
-    # #
-    # # _ = run_kernel_shap_for_batch(
-    # #     model,
-    # #     X_batch=X,
-    # #     xdict=xdict,
-    # #     run_dir=run_dir,
-    # #     background_X=X_bg,
-    # #     nsamples=4096,  # can set to 200–500 for more stable values
-    # #     link_logit=True,  # explain logits
-    # #     class_mode="predicted",  # explain the predicted next activity
-    # # )
-    #
-    # X_bg = X[:min(32, X.shape[0])]
-    # run_dir = os.path.join("outputs", args.dataset, "shap_small_background")
-    #
-    # _ = run_kernel_shap_for_batch(
-    #     model,
-    #     X_batch=X,
-    #     xdict=xdict,
-    #     run_dir=run_dir,
-    #     background_X=X_bg,
-    #     nsamples=250,  # can set to 200–500 for more stable values
-    #     link_logit=True,  # explain logits
-    #     class_mode="predicted",  # explain the predicted next activity
-    # )
-    #
-    # # run_dir = os.path.join("outputs", args.dataset, "shap_small_background_big_sample")
-    # # _ = run_kernel_shap_for_batch(
-    # #     model,
-    # #     X_batch=X,
-    # #     xdict=xdict,
-    # #     run_dir=run_dir,
-    # #     background_X=X_bg,
-    # #     nsamples=4096,  # can set to 200–500 for more stable values
-    # #     link_logit=True,  # explain logits
-    # #     class_mode="predicted",  # explain the predicted next activity
-    # # )
-    #
-    #
-    # # run_shap(
-    # #     model,
-    # #     X_batch=X,
-    # #     xdict=xdict,
-    # #     run_dir="./outputs/Helpdesk/shap_subsequence",
-    # #     background_X=X_bg,
-    # #     nsamples=4096,
-    # #     masker_mode="subsequence",
-    # #     verify=True
-    # # )
-    # #
-    # # run_shap(
-    # #     model,
-    # #     X_batch=X,
-    # #     xdict=xdict,
-    # #     run_dir="./outputs/Helpdesk/shap_causalprefix",
-    # #     background_X=X_bg,
-    # #     nsamples=4096,
-    # #     masker_mode="causal_prefix",
-    # #     verify=True,
-    # # )
+    print(f"\n{'='*60}")
+    print(f"All outputs saved to: {outdir}")
+    print(f"{'='*60}")
 
 
 if __name__ == "__main__":
-    main(False)
+    main()
