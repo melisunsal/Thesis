@@ -700,16 +700,19 @@ def main():
     if args.full_pipeline or not os.path.exists(results_file):
         print("Running SHAP batch analysis first...")
         import subprocess
+        # Use the deletion-only SHAP script (preferred for proper Shapley semantics)
         cmd = [
-            "python", "shap_analysis.py",
+            "python", "shapley_ppm_deletion_only_shap_pkg.py",
             "--dataset", args.dataset,
             "--batch_mode",
             "--start_idx", "0",
             "--end_idx", str(args.batch_size),
             "--repo_root", args.repo_root,
-            "--out_dir", args.results_dir
         ]
         subprocess.run(cmd, check=True)
+        # Update results_dir to point to the deletion script's output
+        args.results_dir = os.path.join(args.repo_root, "outputs", args.dataset, "shap_deletion_batch_analysis")
+        results_file = os.path.join(args.results_dir, "shap_analysis_batch.json")
         print()
 
     # Load results
