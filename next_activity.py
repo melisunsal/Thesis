@@ -1,4 +1,5 @@
 import os
+import random
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -38,6 +39,10 @@ parser.add_argument("--gpu", default=0, type=int,
 
 args = parser.parse_args()
 os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu)
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+tf.random.set_seed(SEED)
 
 if __name__ == "__main__":
     model_path = f"{args.model_dir}/{args.dataset}"

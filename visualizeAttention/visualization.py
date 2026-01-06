@@ -1,32 +1,32 @@
 #!/usr/bin/env python3
+import argparse
+
 import numpy as np
 from pathlib import Path
 from attention_viz_utils import render_attention_entry
 
 def main():
-    # Sabit dizin
-    base_dir = Path("./outputs/BPIC2012-O")
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--dataset", default="BPIC2012-O", help="Dataset name")
+    ap.add_argument("--prefix_index", help="Index of longest prefix")
+    args = ap.parse_args()
+
+    DATASET = args.dataset
+    OUTPUTS_DIR = Path("outputs")
+    ATTENTION_VIZ_DIR = Path("attentionMaps")
+    base_dir = OUTPUTS_DIR / DATASET
     scores_path = base_dir / "block_mha_scores.npy"
     batch_txt_path = base_dir / "batch_prefixes.txt"
     case_ids_path = base_dir / "batch_case_ids.txt"
-    output_dir = Path("./outputs/BPIC2012-O/attentionMaps")
+    output_dir = OUTPUTS_DIR / DATASET / ATTENTION_VIZ_DIR
     # Yükle
     scores = np.load(scores_path)
     print(f"Loaded attention scores: shape={scores.shape}")
 
-    # Case id’ler (varsa)
+    sample_idx = int(args.prefix_index)
     case_ids = case_ids_path.read_text(encoding="utf-8").splitlines() if case_ids_path.exists() else None
     prefixes = batch_txt_path.read_text(encoding="utf-8").splitlines() if batch_txt_path.exists() else None
-
-    # Kullanıcıdan hangi sample’ı göstereceğini iste
-    try:
-        sample_idx = int(input(f"Enter sample index [0-{scores.shape[0]-1}]: "))
-    except ValueError:
-        print("Invalid input. Exiting.")
-        return
-    if sample_idx < 0 or sample_idx >= scores.shape[0]:
-        print("Out of range.")
-        return
 
     # Başlık: Case ID + Prefix
     title_prefix = ""

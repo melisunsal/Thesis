@@ -1,0 +1,15 @@
+case_id,prefix,k,next_act
+1,register,0,analyze
+1,register analyze,1,resolve
+1,register analyze resolve,2,close
+2,register,0,analyze
+2,register analyze,1,resolve
+2,register analyze resolve,2,close
+3,register,0,analyze
+3,register analyze,1,resolve
+3,register analyze resolve,2,close
+3,register analyze resolve close,3,register
+4,register,0,analyze
+4,register analyze,1,resolve
+4,register analyze resolve,2,close
+4,register analyze resolve close,3,register

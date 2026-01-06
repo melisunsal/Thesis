@@ -1,0 +1,1 @@
+{"x_word_dict": {"[PAD]": 0, "[UNK]": 1, "o_selected": 2, "o_created": 3, "o_sent": 4, "o_sent_back": 5, "o_accepted": 6, "o_cancelled": 7, "o_declined": 8}, "y_word_dict": {"o_selected": 0, "o_created": 1, "o_sent": 2, "o_sent_back": 3, "o_accepted": 4, "o_cancelled": 5, "o_declined": 6}}

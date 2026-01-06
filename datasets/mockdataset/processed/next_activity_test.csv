@@ -1,0 +1,5 @@
+case_id,prefix,k,next_act
+5,register,0,analyze
+5,register analyze,1,resolve
+5,register analyze resolve,2,close
+5,register analyze resolve close,3,register

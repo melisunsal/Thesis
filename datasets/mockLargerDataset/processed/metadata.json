@@ -1,0 +1,1 @@
+{"x_word_dict": {"[PAD]": 0, "[UNK]": 1, "register": 2, "classify": 3, "analyze": 4, "resolve": 5, "close": 6, "escalate": 7, "wait": 8}, "y_word_dict": {"register": 0, "classify": 1, "analyze": 2, "resolve": 3, "close": 4, "escalate": 5, "wait": 6}}
