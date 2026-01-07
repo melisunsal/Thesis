@@ -31,8 +31,14 @@ if __name__ == '__main__':
 
     PY = sys.executable  # uses the same venv python running main.py
 
+    # subprocess.run(
+    #     [PY, "next_activity.py",
+    #      "--dataset", DATASET,
+    #      "--epochs", 20],
+    #     check=True
+    # )
     # -----------------------------
-    # 1) run get_attention_hooked
+    #  run get_attention_hooked
     # -----------------------------
     subprocess.run(
         [PY, "get_attention_hooked.py", "--dataset", DATASET],
@@ -48,6 +54,13 @@ if __name__ == '__main__':
         check=True
     )
 
+    subprocess.run(
+        [PY, "shapley_ppm_deletion_only_shap_pkg.py",
+         "--dataset", DATASET,
+         "--prefix_index", str(idx)],
+        check=True
+    )
+
     # # GPT version
     # exp_gpt = explain_prefix(
     #     dataset_name="BPIC2012-O",
@@ -58,7 +71,7 @@ if __name__ == '__main__':
     # )
     # print(exp_gpt)
 
-    # LLMama version (once you have the endpoint)
+    # LLMama version
     # exp_llmama = explain_prefix(
     #     dataset_name="BPIC2012-O",
     #     out_dir="./outputs",

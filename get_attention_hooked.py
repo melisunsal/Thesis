@@ -8,10 +8,6 @@ This script:
 3. Performs a single forward pass to get both logits and attention
 4. Saves predictions, attention scores, and metadata for downstream analysis
 
-Key fixes from original:
-- Eliminated global state (CURRENT_KEY_MASK)
-- Single forward pass for both logits and attention
-- Instance-based mask passing to hooked MHA
 """
 
 import json
