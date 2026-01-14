@@ -1,0 +1,194 @@
+{
+  "dataset": "BPIC2012-O",
+  "batch_index": 5,
+  "case_id": 212349,
+  "prefix_activities": [
+    "o_selected",
+    "o_created",
+    "o_sent",
+    "o_selected",
+    "o_cancelled",
+    "o_created",
+    "o_sent",
+    "o_cancelled",
+    "o_selected",
+    "o_created",
+    "o_sent",
+    "o_cancelled",
+    "o_selected"
+  ],
+  "stored_predicted_label": "o_created",
+  "stored_predicted_prob": null,
+  "model_predicted_label": "o_created",
+  "model_predicted_prob": 0.999951958656311,
+  "predicted_class_index": 1,
+  "L": 13,
+  "feature_names": [
+    "E1:o_selected",
+    "E2:o_created",
+    "E3:o_sent",
+    "E4:o_selected",
+    "E5:o_cancelled",
+    "E6:o_created",
+    "E7:o_sent",
+    "E8:o_cancelled",
+    "E9:o_selected",
+    "E10:o_created",
+    "E11:o_sent",
+    "E12:o_cancelled",
+    "E13:o_selected"
+  ],
+  "phi_pad_replace": [
+    0.024433507652356357,
+    -3.482364359394464,
+    -0.12491705593685386,
+    0.38953506221642364,
+    0.02137641280774444,
+    0.7527942853659737,
+    -0.5614990028175147,
+    0.10962900991145248,
+    0.115708022964507,
+    0.010223960784411339,
+    -0.16963686365418454,
+    1.7919360464834337,
+    3.240421468917007
+  ],
+  "base_value": 3.280466079711914,
+  "f_full": 5.398106098175049,
+  "verification": {
+    "phi_method": "shap_permutation_on_mask_space",
+    "base_value_true_empty": 3.280466079711914,
+    "base_value_shap": 3.280466079711914,
+    "base_value_diff": 0.0,
+    "f_full_true": 5.398106098175049,
+    "f_reconstructed": 5.398106575012207,
+    "additivity_error_vs_true_full": 4.76837158203125e-07,
+    "n_permutations_target": 1000,
+    "max_evals": 14000,
+    "explain_logit": true
+  },
+  "verification_loo": {
+    "pearson_phi_vs_loo": 0.536959942156758,
+    "spearman_phi_vs_loo": 0.42857142857142855,
+    "pearson_absphi_vs_absloo": 0.6266017663482016,
+    "spearman_absphi_vs_absloo": 0.13736263736263737,
+    "loo_deltas": [
+      -0.0027723312377929688,
+      -0.00403594970703125,
+      -0.015275001525878906,
+      0.004390716552734375,
+      0.03851890563964844,
+      -0.002192974090576172,
+      -0.019370079040527344,
+      0.0018343925476074219,
+      0.0029082298278808594,
+      -0.0412898063659668,
+      -0.03251457214355469,
+      -0.2713627815246582,
+      1.3106350898742676
+    ]
+  },
+  "verification_topk": {
+    "kmax": 10,
+    "top1_positive": "E13:o_selected",
+    "top1_abs": "E2:o_created",
+    "drops_topk_positive": [
+      1.3106350898742676,
+      10.559311389923096,
+      12.199531078338623,
+      14.532646656036377,
+      15.449121952056885,
+      16.413398265838623,
+      16.67675256729126,
+      16.1628155708313,
+      16.49416971206665,
+      16.312860012054443
+    ],
+    "drops_topk_abs": [
+      -0.00403594970703125,
+      0.2608180046081543,
+      0.3936467170715332,
+      2.3076772689819336,
+      1.4708256721496582,
+      2.017953395843506,
+      1.9115195274353027,
+      1.6370153427124023,
+      1.788649559020996,
+      1.9289278984069824
+    ],
+    "increases_remove_topk_negative": [
+      0.00403594970703125,
+      0.023561477661132812,
+      0.0448908805847168,
+      0.05503702163696289,
+      0.05875205993652344,
+      0.05365276336669922,
+      0.05270957946777344,
+      0.05137348175048828,
+      0.04825305938720703,
+      0.04485750198364258
+    ]
+  },
+  "attention_alignment": {
+    "attention_available": true,
+    "attention_shape": [
+      32,
+      4,
+      29,
+      29
+    ],
+    "attn_last_row_mean_heads": [
+      0.0009294394985772669,
+      0.10734136402606964,
+      0.006511347834020853,
+      0.012006728909909725,
+      9.252940071746707e-05,
+      0.09040872752666473,
+      0.01498732902109623,
+      0.00479686725884676,
+      0.006544196978211403,
+      0.002180673647671938,
+      0.004530015867203474,
+      0.22202298045158386,
+      0.5276477932929993
+    ],
+    "pearson_attn_vs_absphi": 0.7861045964128638,
+    "spearman_attn_vs_absphi": 0.9285714285714286,
+    "topk": 5,
+    "topk_attn_indices_0based": [
+      12,
+      11,
+      1,
+      5,
+      6
+    ],
+    "topk_absphi_indices_0based": [
+      1,
+      12,
+      11,
+      5,
+      6
+    ],
+    "topk_overlap_count": 5,
+    "topk_overlap_ratio": 1.0,
+    "topk_attn_features": [
+      "E13:o_selected",
+      "E12:o_cancelled",
+      "E2:o_created",
+      "E6:o_created",
+      "E7:o_sent"
+    ],
+    "topk_absphi_features": [
+      "E2:o_created",
+      "E13:o_selected",
+      "E12:o_cancelled",
+      "E6:o_created",
+      "E7:o_sent"
+    ]
+  },
+  "settings": {
+    "explain_logit": true,
+    "n_permutations": 1000,
+    "random_seed": 123
+  }
+}

@@ -1,0 +1,1033 @@
+{
+  "predictions": [
+    {
+      "batch_index": 0,
+      "case_id": 206267,
+      "prefix_len": 4,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_sent_back"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.999842519474568,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.0001228156379434215
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 2.3879879603929037e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 7.454289866352652e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 1,
+      "case_id": 206645,
+      "prefix_len": 9,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_sent_back",
+        "o_cancelled",
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_sent_back"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9989247655698746,
+      "top_alternatives": [
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 0.0005928896615064888
+        },
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.00034151770159905305
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 6.590249965324976e-05
+        }
+      ]
+    },
+    {
+      "batch_index": 2,
+      "case_id": 206261,
+      "prefix_len": 3,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999273468326124,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 5.453537100190592e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 1.1621375973874695e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 4.04553045413852e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 3,
+      "case_id": 206261,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "o_selected",
+        "o_created"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999056125429803,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 8.727466818036498e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 4.249944481929634e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.0176215872823305e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 4,
+      "case_id": 206333,
+      "prefix_len": 6,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_selected",
+        "o_cancelled",
+        "o_created"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9998174579538409,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.00015998476690934948
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 1.5316816343380956e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 4.240099058883591e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 5,
+      "case_id": 212349,
+      "prefix_len": 13,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_selected",
+        "o_cancelled",
+        "o_created",
+        "o_sent",
+        "o_cancelled",
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_cancelled",
+        "o_selected"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9993733597705446,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.0003000415165486668
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 0.0002672193690864814
+        },
+        {
+          "class_index": 5,
+          "label": "o_cancelled",
+          "prob": 2.060565672903209e-05
+        }
+      ]
+    },
+    {
+      "batch_index": 6,
+      "case_id": 207266,
+      "prefix_len": 9,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_selected",
+        "o_cancelled",
+        "o_created",
+        "o_sent",
+        "o_cancelled",
+        "o_selected"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9998068155083759,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.00015418664712139852
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 2.8971779671797835e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 4.691090109466419e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 7,
+      "case_id": 206279,
+      "prefix_len": 4,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_sent_back"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.999842519474568,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.0001228156379434215
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 2.3879879603929037e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 7.454289866352652e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 8,
+      "case_id": 206264,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "o_selected",
+        "o_created"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999056125429803,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 8.727466818036498e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 4.249944481929634e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.0176215872823305e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 9,
+      "case_id": 206261,
+      "prefix_len": 1,
+      "prefix_activities": [
+        "o_selected"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999391106200837,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 5.204242342272441e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 5.299227240771188e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.4772670155791883e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 10,
+      "case_id": 206261,
+      "prefix_len": 7,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_cancelled",
+        "o_selected",
+        "o_created",
+        "o_sent"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9998635902929884,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.00011246544298413021
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 1.5469345743062236e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 4.835706101763468e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 11,
+      "case_id": 206264,
+      "prefix_len": 1,
+      "prefix_activities": [
+        "o_selected"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999391106200837,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 5.204242342272441e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 5.299227240771188e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.4772670155791883e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 12,
+      "case_id": 206267,
+      "prefix_len": 1,
+      "prefix_activities": [
+        "o_selected"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999391106200837,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 5.204242342272441e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 5.299227240771188e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.4772670155791883e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 13,
+      "case_id": 206264,
+      "prefix_len": 3,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999273468326124,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 5.453537100190592e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 1.1621375973874695e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 4.04553045413852e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 14,
+      "case_id": 206267,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "o_selected",
+        "o_created"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999056125429803,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 8.727466818036498e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 4.249944481929634e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.0176215872823305e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 15,
+      "case_id": 207266,
+      "prefix_len": 8,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_selected",
+        "o_cancelled",
+        "o_created",
+        "o_sent",
+        "o_cancelled"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9996253808389294,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.00025407791227844215
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 8.032294991660067e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.3712632153680645e-05
+        }
+      ]
+    },
+    {
+      "batch_index": 16,
+      "case_id": 206270,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "o_selected",
+        "o_created"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999056125429803,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 8.727466818036498e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 4.249944481929634e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.0176215872823305e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 17,
+      "case_id": 206267,
+      "prefix_len": 3,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999273468326124,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 5.453537100190592e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 1.1621375973874695e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 4.04553045413852e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 18,
+      "case_id": 206270,
+      "prefix_len": 3,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999273468326124,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 5.453537100190592e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 1.1621375973874695e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 4.04553045413852e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 19,
+      "case_id": 207708,
+      "prefix_len": 8,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_cancelled",
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_cancelled"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9996204824459004,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.00026022262731814725
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 7.949783738814192e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.3350498527422734e-05
+        }
+      ]
+    },
+    {
+      "batch_index": 20,
+      "case_id": 206261,
+      "prefix_len": 10,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_cancelled",
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_sent_back",
+        "o_cancelled",
+        "o_selected"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999192382261503,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 6.732980041168873e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 9.152975417130928e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.648518850436219e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 21,
+      "case_id": 206285,
+      "prefix_len": 4,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_sent_back"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.999842519474568,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.0001228156379434215
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 2.3879879603929037e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 7.454289866352652e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 22,
+      "case_id": 206261,
+      "prefix_len": 4,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_cancelled"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999070185297351,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 7.620217773630308e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 8.487548057560969e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 6.089950500930583e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 23,
+      "case_id": 206357,
+      "prefix_len": 12,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_cancelled",
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_selected",
+        "o_cancelled",
+        "o_created",
+        "o_sent",
+        "o_cancelled"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9987264100566919,
+      "top_alternatives": [
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 0.0005714559708114593
+        },
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.0005088177963722316
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 0.00010926724023681975
+        }
+      ]
+    },
+    {
+      "batch_index": 24,
+      "case_id": 206291,
+      "prefix_len": 4,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_sent_back"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.999842519474568,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.0001228156379434215
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 2.3879879603929037e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 7.454289866352652e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 25,
+      "case_id": 206270,
+      "prefix_len": 1,
+      "prefix_activities": [
+        "o_selected"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999391106200837,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 5.204242342272441e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 5.299227240771188e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.4772670155791883e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 26,
+      "case_id": 206357,
+      "prefix_len": 15,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_cancelled",
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_selected",
+        "o_cancelled",
+        "o_created",
+        "o_sent",
+        "o_cancelled",
+        "o_selected",
+        "o_created",
+        "o_sent"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9987770302565138,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.00103333936107801
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 0.0001280454977439305
+        },
+        {
+          "class_index": 5,
+          "label": "o_cancelled",
+          "prob": 2.2907647601076185e-05
+        }
+      ]
+    },
+    {
+      "batch_index": 27,
+      "case_id": 206270,
+      "prefix_len": 4,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_cancelled"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999070185297351,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 7.620217773630308e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 8.487548057560969e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 6.089950500930583e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 28,
+      "case_id": 206261,
+      "prefix_len": 5,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_cancelled",
+        "o_selected"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999355915871443,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 5.5288920510723415e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 5.905991644883773e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.180723402426364e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 29,
+      "case_id": 206279,
+      "prefix_len": 1,
+      "prefix_activities": [
+        "o_selected"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9999391106200837,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 5.204242342272441e-05
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 5.299227240771188e-06
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 2.4772670155791883e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 30,
+      "case_id": 206441,
+      "prefix_len": 6,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_selected",
+        "o_cancelled",
+        "o_created"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9998174579538409,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.00015998476690934948
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 1.5316816343380956e-05
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 4.240099058883591e-06
+        }
+      ]
+    },
+    {
+      "batch_index": 31,
+      "case_id": 206261,
+      "prefix_len": 8,
+      "prefix_activities": [
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_cancelled",
+        "o_selected",
+        "o_created",
+        "o_sent",
+        "o_sent_back"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "o_created",
+      "pred_prob": 0.9993383223191904,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "o_sent",
+          "prob": 0.0002981579832441351
+        },
+        {
+          "class_index": 4,
+          "label": "o_accepted",
+          "prob": 0.00028278946272652553
+        },
+        {
+          "class_index": 0,
+          "label": "o_selected",
+          "prob": 4.2341081901201024e-05
+        }
+      ]
+    }
+  ]
+}

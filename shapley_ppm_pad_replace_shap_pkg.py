@@ -15,14 +15,16 @@ ap.add_argument("--dataset", default="BPIC2012-O", help="Dataset name")
 ap.add_argument("--prefix_index", help="Index of longest prefix")
 args = ap.parse_args()
 
-DATASET = args.dataset
-BATCH_INDEX = int(args.prefix_index)
+
 REPO_ROOT = args.repo_root
 MODELS_ROOT = os.path.join(REPO_ROOT, "models")
+DATASET = args.dataset
+BATCH_INDEX = int(args.prefix_index)
+
 BATCH_PRED_PATH = os.path.join(REPO_ROOT, "outputs", DATASET, "batch_predictions.json")
 ATTN_NPY_PATH = os.path.join(REPO_ROOT, "outputs", DATASET, "block_mha_scores.npy")
 
-OUT_DIR = os.path.join(REPO_ROOT, "outputs", DATASET, f"shap_deletion_only_shap_pkg_batch_{BATCH_INDEX}")
+OUT_DIR = os.path.join(REPO_ROOT, "outputs", DATASET, f"shap_pad_replace_shap_pkg_batch_{BATCH_INDEX}")
 
 EXPLAIN_LOGIT = True
 
@@ -60,8 +62,8 @@ def softmax(x: np.ndarray, axis=-1) -> np.ndarray:
 
 def pad_left_to_max(tokens: np.ndarray, max_len: int, pad_id: int) -> np.ndarray:
     """
-    This matches your deletion-only semantics:
-    take kept tokens in order, then left-pad to max_len.
+    Helper to left-pad a token sequence to max_len.
+    (Kept for consistency: the model expects fixed-length, left-padded inputs.)
     """
     out = np.full((max_len,), pad_id, dtype=np.int32)
     if tokens.size == 0:
@@ -175,20 +177,29 @@ def main():
     pred_prob = float(probs_full[0, class_idx])
     print(f"Model prediction on full prefix: {pred_label} (p={pred_prob:.4f}), EXPLAIN_LOGIT={EXPLAIN_LOGIT}")
 
-    # 6) Define value function on mask vectors (this preserves your deletion-only semantics)
-    # masks: (n, L) with 0/1, keep where 1, then left-pad the kept subsequence
+    # 6) Define value function on mask vectors (pad replacement, position-preserving)
+    # masks: (n, L) with 0/1, keep where 1, replace with PAD where 0 (no shifting)
     def f_from_masks(masks: np.ndarray) -> np.ndarray:
+        """Value function on binary masks using *pad replacement*.
+
+        masks: (n, L) with 0/1, where 1 keeps the original event at that position
+        and 0 replaces it with PAD *in-place* (no shifting). This preserves token
+        positions inside the left-padded max_case_length input.
+        """
         masks = np.asarray(masks)
         if masks.ndim == 1:
             masks = masks.reshape(1, -1)
 
-        keep = masks > 0.5  # bool
+        keep = masks > 0.5  # (n, L) bool
         n = keep.shape[0]
 
-        X_batch = np.zeros((n, max_case_length), dtype=np.int32)
-        for r in range(n):
-            kept_tokens = x_unpadded[keep[r]]
-            X_batch[r] = pad_left_to_max(kept_tokens, max_case_length, pad_id)
+        # Start from the fully padded input (left pads + the original prefix at the end)
+        X_batch = np.repeat(x_full_padded, repeats=n, axis=0)  # (n, max_case_length)
+
+        # Replace masked-out positions inside the prefix window with PAD, without shifting.
+        start = max_case_length - L  # where the prefix begins in the padded sequence
+        tokens = np.repeat(x_unpadded.reshape(1, -1), repeats=n, axis=0)  # (n, L)
+        X_batch[:, start:start + L] = np.where(keep, tokens, pad_id).astype(np.int32)
 
         logits = model.predict(X_batch, verbose=0)
         if EXPLAIN_LOGIT:
@@ -197,11 +208,11 @@ def main():
         probs = softmax(logits, axis=-1)
         return probs[:, class_idx].astype(np.float64)
 
-    # Baseline mask is all zeros (empty)
+    # Baseline mask is all zeros (all PADs in prefix window)
     mask_empty = np.zeros((1, L), dtype=np.int8)
     base_val_true = float(f_from_masks(mask_empty)[0])
 
-    # Full mask is all ones (full)
+    # Full mask is all ones (full prefix)
     mask_full = np.ones((1, L), dtype=np.int8)
     fx_full_true = float(f_from_masks(mask_full)[0])
 
@@ -363,7 +374,7 @@ def main():
         "predicted_class_index": class_idx,
         "L": L,
         "feature_names": feature_names,
-        "phi_deletion_only": phi.tolist(),
+        "phi_pad_replace": phi.tolist(),
         "base_value": float(base_val),
         "f_full": float(fx_full_true),
         "verification": verif,
@@ -390,14 +401,14 @@ def main():
 
     plt.figure()
     shap.plots.waterfall(explanation, show=False, max_display=min(20, L))
-    plt.title(f"SHAP Permutation Waterfall (mask-space), pred={pred_label} (batch_index={BATCH_INDEX})")
+    plt.title(f"SHAP Permutation Waterfall (pad-replace, mask-space), pred={pred_label} (batch_index={BATCH_INDEX})")
     plt.tight_layout()
     plt.savefig(os.path.join(OUT_DIR, "shap_waterfall.png"), dpi=200)
     plt.close()
 
     plt.figure()
     shap.plots.bar(explanation, show=False, max_display=min(20, L))
-    plt.title(f"SHAP Permutation Bar (mask-space), pred={pred_label} (batch_index={BATCH_INDEX})")
+    plt.title(f"SHAP Permutation Bar (pad-replace, mask-space), pred={pred_label} (batch_index={BATCH_INDEX})")
     plt.tight_layout()
     plt.savefig(os.path.join(OUT_DIR, "shap_bar.png"), dpi=200)
     plt.close()
