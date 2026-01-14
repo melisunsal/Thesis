@@ -1,0 +1,968 @@
+{
+  "predictions": [
+    {
+      "batch_index": 0,
+      "case_id": 206324,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9991973487490219,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.0004226940237276819
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0003799513726326042
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 3.1460492534623184e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 1,
+      "case_id": 206333,
+      "prefix_len": 4,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted",
+        "a_accepted"
+      ],
+      "predicted_index": 8,
+      "predicted_label": "a_declined",
+      "pred_prob": 0.4162911858678098,
+      "top_alternatives": [
+        {
+          "class_index": 1,
+          "label": "a_partlysubmitted",
+          "prob": 0.29660055653408335
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.2532403976796487
+        },
+        {
+          "class_index": 4,
+          "label": "a_finalized",
+          "prob": 0.022502172359746185
+        }
+      ]
+    },
+    {
+      "batch_index": 2,
+      "case_id": 206408,
+      "prefix_len": 7,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted",
+        "a_accepted",
+        "a_finalized",
+        "a_activated",
+        "a_registered"
+      ],
+      "predicted_index": 8,
+      "predicted_label": "a_declined",
+      "pred_prob": 0.19045534371024103,
+      "top_alternatives": [
+        {
+          "class_index": 6,
+          "label": "a_approved",
+          "prob": 0.1590687885422383
+        },
+        {
+          "class_index": 4,
+          "label": "a_finalized",
+          "prob": 0.15852660088075388
+        },
+        {
+          "class_index": 9,
+          "label": "a_cancelled",
+          "prob": 0.11469594658259848
+        }
+      ]
+    },
+    {
+      "batch_index": 3,
+      "case_id": 206336,
+      "prefix_len": 4,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted",
+        "a_accepted"
+      ],
+      "predicted_index": 8,
+      "predicted_label": "a_declined",
+      "pred_prob": 0.4162911858678098,
+      "top_alternatives": [
+        {
+          "class_index": 1,
+          "label": "a_partlysubmitted",
+          "prob": 0.29660055653408335
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.2532403976796487
+        },
+        {
+          "class_index": 4,
+          "label": "a_finalized",
+          "prob": 0.022502172359746185
+        }
+      ]
+    },
+    {
+      "batch_index": 4,
+      "case_id": 206324,
+      "prefix_len": 1,
+      "prefix_activities": [
+        "a_submitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9995743590361739,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.00023352450470097744
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0001921105212440091
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 4.139035879642632e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 5,
+      "case_id": 206327,
+      "prefix_len": 3,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted"
+      ],
+      "predicted_index": 8,
+      "predicted_label": "a_declined",
+      "pred_prob": 0.5395827162450793,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.4318382478364436
+        },
+        {
+          "class_index": 1,
+          "label": "a_partlysubmitted",
+          "prob": 0.023849050334237704
+        },
+        {
+          "class_index": 3,
+          "label": "a_accepted",
+          "prob": 0.002915040971325045
+        }
+      ]
+    },
+    {
+      "batch_index": 6,
+      "case_id": 206333,
+      "prefix_len": 3,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted"
+      ],
+      "predicted_index": 8,
+      "predicted_label": "a_declined",
+      "pred_prob": 0.5395827162450793,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.4318382478364436
+        },
+        {
+          "class_index": 1,
+          "label": "a_partlysubmitted",
+          "prob": 0.023849050334237704
+        },
+        {
+          "class_index": 3,
+          "label": "a_accepted",
+          "prob": 0.002915040971325045
+        }
+      ]
+    },
+    {
+      "batch_index": 7,
+      "case_id": 206327,
+      "prefix_len": 1,
+      "prefix_activities": [
+        "a_submitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9995743590361739,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.00023352450470097744
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0001921105212440091
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 4.139035879642632e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 8,
+      "case_id": 206339,
+      "prefix_len": 6,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted",
+        "a_accepted",
+        "a_finalized",
+        "a_activated"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.5486063578017707,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.22399176251604097
+        },
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.17337545067679985
+        },
+        {
+          "class_index": 4,
+          "label": "a_finalized",
+          "prob": 0.023237812853085373
+        }
+      ]
+    },
+    {
+      "batch_index": 9,
+      "case_id": 206336,
+      "prefix_len": 3,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted"
+      ],
+      "predicted_index": 8,
+      "predicted_label": "a_declined",
+      "pred_prob": 0.5395827162450793,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.4318382478364436
+        },
+        {
+          "class_index": 1,
+          "label": "a_partlysubmitted",
+          "prob": 0.023849050334237704
+        },
+        {
+          "class_index": 3,
+          "label": "a_accepted",
+          "prob": 0.002915040971325045
+        }
+      ]
+    },
+    {
+      "batch_index": 10,
+      "case_id": 206339,
+      "prefix_len": 4,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted",
+        "a_accepted"
+      ],
+      "predicted_index": 8,
+      "predicted_label": "a_declined",
+      "pred_prob": 0.4162911858678098,
+      "top_alternatives": [
+        {
+          "class_index": 1,
+          "label": "a_partlysubmitted",
+          "prob": 0.29660055653408335
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.2532403976796487
+        },
+        {
+          "class_index": 4,
+          "label": "a_finalized",
+          "prob": 0.022502172359746185
+        }
+      ]
+    },
+    {
+      "batch_index": 11,
+      "case_id": 206351,
+      "prefix_len": 7,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted",
+        "a_accepted",
+        "a_finalized",
+        "a_approved",
+        "a_registered"
+      ],
+      "predicted_index": 3,
+      "predicted_label": "a_accepted",
+      "pred_prob": 0.2708194734652176,
+      "top_alternatives": [
+        {
+          "class_index": 4,
+          "label": "a_finalized",
+          "prob": 0.2613257659268275
+        },
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.16413519266355206
+        },
+        {
+          "class_index": 9,
+          "label": "a_cancelled",
+          "prob": 0.1271036845507164
+        }
+      ]
+    },
+    {
+      "batch_index": 12,
+      "case_id": 206342,
+      "prefix_len": 4,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted",
+        "a_accepted"
+      ],
+      "predicted_index": 8,
+      "predicted_label": "a_declined",
+      "pred_prob": 0.4162911858678098,
+      "top_alternatives": [
+        {
+          "class_index": 1,
+          "label": "a_partlysubmitted",
+          "prob": 0.29660055653408335
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.2532403976796487
+        },
+        {
+          "class_index": 4,
+          "label": "a_finalized",
+          "prob": 0.022502172359746185
+        }
+      ]
+    },
+    {
+      "batch_index": 13,
+      "case_id": 206327,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9991973487490219,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.0004226940237276819
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0003799513726326042
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 3.1460492534623184e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 14,
+      "case_id": 206330,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9991973487490219,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.0004226940237276819
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0003799513726326042
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 3.1460492534623184e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 15,
+      "case_id": 206333,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9991973487490219,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.0004226940237276819
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0003799513726326042
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 3.1460492534623184e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 16,
+      "case_id": 206330,
+      "prefix_len": 1,
+      "prefix_activities": [
+        "a_submitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9995743590361739,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.00023352450470097744
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0001921105212440091
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 4.139035879642632e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 17,
+      "case_id": 206333,
+      "prefix_len": 1,
+      "prefix_activities": [
+        "a_submitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9995743590361739,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.00023352450470097744
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0001921105212440091
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 4.139035879642632e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 18,
+      "case_id": 206336,
+      "prefix_len": 1,
+      "prefix_activities": [
+        "a_submitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9995743590361739,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.00023352450470097744
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0001921105212440091
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 4.139035879642632e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 19,
+      "case_id": 206348,
+      "prefix_len": 4,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted",
+        "a_accepted"
+      ],
+      "predicted_index": 8,
+      "predicted_label": "a_declined",
+      "pred_prob": 0.4162911858678098,
+      "top_alternatives": [
+        {
+          "class_index": 1,
+          "label": "a_partlysubmitted",
+          "prob": 0.29660055653408335
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.2532403976796487
+        },
+        {
+          "class_index": 4,
+          "label": "a_finalized",
+          "prob": 0.022502172359746185
+        }
+      ]
+    },
+    {
+      "batch_index": 20,
+      "case_id": 206360,
+      "prefix_len": 6,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted",
+        "a_accepted",
+        "a_finalized",
+        "a_registered"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.6929176030459361,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.14340066796276352
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.12489275588933767
+        },
+        {
+          "class_index": 6,
+          "label": "a_approved",
+          "prob": 0.013463212123917928
+        }
+      ]
+    },
+    {
+      "batch_index": 21,
+      "case_id": 206336,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9991973487490219,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.0004226940237276819
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0003799513726326042
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 3.1460492534623184e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 22,
+      "case_id": 206339,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9991973487490219,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.0004226940237276819
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0003799513726326042
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 3.1460492534623184e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 23,
+      "case_id": 206339,
+      "prefix_len": 3,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted"
+      ],
+      "predicted_index": 8,
+      "predicted_label": "a_declined",
+      "pred_prob": 0.5395827162450793,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.4318382478364436
+        },
+        {
+          "class_index": 1,
+          "label": "a_partlysubmitted",
+          "prob": 0.023849050334237704
+        },
+        {
+          "class_index": 3,
+          "label": "a_accepted",
+          "prob": 0.002915040971325045
+        }
+      ]
+    },
+    {
+      "batch_index": 24,
+      "case_id": 206342,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9991973487490219,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.0004226940237276819
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0003799513726326042
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 3.1460492534623184e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 25,
+      "case_id": 206345,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9991973487490219,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.0004226940237276819
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0003799513726326042
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 3.1460492534623184e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 26,
+      "case_id": 206333,
+      "prefix_len": 5,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted",
+        "a_accepted",
+        "a_finalized"
+      ],
+      "predicted_index": 3,
+      "predicted_label": "a_accepted",
+      "pred_prob": 0.4716369138639471,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.3494096066807492
+        },
+        {
+          "class_index": 9,
+          "label": "a_cancelled",
+          "prob": 0.1349883088110797
+        },
+        {
+          "class_index": 4,
+          "label": "a_finalized",
+          "prob": 0.02766598697225622
+        }
+      ]
+    },
+    {
+      "batch_index": 27,
+      "case_id": 206351,
+      "prefix_len": 4,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted",
+        "a_accepted"
+      ],
+      "predicted_index": 8,
+      "predicted_label": "a_declined",
+      "pred_prob": 0.4162911858678098,
+      "top_alternatives": [
+        {
+          "class_index": 1,
+          "label": "a_partlysubmitted",
+          "prob": 0.29660055653408335
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.2532403976796487
+        },
+        {
+          "class_index": 4,
+          "label": "a_finalized",
+          "prob": 0.022502172359746185
+        }
+      ]
+    },
+    {
+      "batch_index": 28,
+      "case_id": 206342,
+      "prefix_len": 3,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted"
+      ],
+      "predicted_index": 8,
+      "predicted_label": "a_declined",
+      "pred_prob": 0.5395827162450793,
+      "top_alternatives": [
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.4318382478364436
+        },
+        {
+          "class_index": 1,
+          "label": "a_partlysubmitted",
+          "prob": 0.023849050334237704
+        },
+        {
+          "class_index": 3,
+          "label": "a_accepted",
+          "prob": 0.002915040971325045
+        }
+      ]
+    },
+    {
+      "batch_index": 29,
+      "case_id": 206336,
+      "prefix_len": 5,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted",
+        "a_preaccepted",
+        "a_accepted",
+        "a_finalized"
+      ],
+      "predicted_index": 3,
+      "predicted_label": "a_accepted",
+      "pred_prob": 0.4716369138639471,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.3494096066807492
+        },
+        {
+          "class_index": 9,
+          "label": "a_cancelled",
+          "prob": 0.1349883088110797
+        },
+        {
+          "class_index": 4,
+          "label": "a_finalized",
+          "prob": 0.02766598697225622
+        }
+      ]
+    },
+    {
+      "batch_index": 30,
+      "case_id": 206348,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9991973487490219,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.0004226940237276819
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0003799513726326042
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 3.1460492534623184e-09
+        }
+      ]
+    },
+    {
+      "batch_index": 31,
+      "case_id": 206351,
+      "prefix_len": 2,
+      "prefix_activities": [
+        "a_submitted",
+        "a_partlysubmitted"
+      ],
+      "predicted_index": 1,
+      "predicted_label": "a_partlysubmitted",
+      "pred_prob": 0.9991973487490219,
+      "top_alternatives": [
+        {
+          "class_index": 8,
+          "label": "a_declined",
+          "prob": 0.0004226940237276819
+        },
+        {
+          "class_index": 2,
+          "label": "a_preaccepted",
+          "prob": 0.0003799513726326042
+        },
+        {
+          "class_index": 7,
+          "label": "a_activated",
+          "prob": 3.1460492534623184e-09
+        }
+      ]
+    }
+  ]
+}

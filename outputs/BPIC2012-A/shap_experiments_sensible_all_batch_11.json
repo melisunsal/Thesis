@@ -1,0 +1,319 @@
+{
+  "L": 7,
+  "target_class": 7,
+  "full_value": 1.6856682300567627,
+  "configs": {
+    "current": {
+      "description": "Baseline reference: deletion + empty + permutation",
+      "settings": {
+        "masking": "deletion",
+        "baseline": "empty",
+        "explainer": "permutation",
+        "n_samples": 500
+      },
+      "base_value": -15.037599563598633,
+      "phi": [
+        0.26978638863563537,
+        0.1863780178427696,
+        0.3011702008843422,
+        -0.3897560362219811,
+        5.1153867634534835,
+        5.391497920274735,
+        5.848803346693516
+      ],
+      "reconstructed": 1.6856670379638672,
+      "additivity_error": 1.1920928955078125e-06,
+      "alignment": {
+        "pearson": 0.6139437403104893,
+        "spearman": 0.7500000000000002,
+        "top_k_overlap": 0.8
+      }
+    },
+    "pad_perm_empty": {
+      "description": "Position-preserving masking under empty baseline",
+      "settings": {
+        "masking": "pad_replace",
+        "baseline": "empty",
+        "explainer": "permutation",
+        "n_samples": 500
+      },
+      "base_value": -15.037599563598633,
+      "phi": [
+        0.16319557511806487,
+        -0.1011093812584877,
+        -0.6202236473560333,
+        0.014110501885414123,
+        4.015381101369858,
+        5.735801687002182,
+        7.516110764801502
+      ],
+      "reconstructed": 1.6856670379638672,
+      "additivity_error": 1.1920928955078125e-06,
+      "alignment": {
+        "pearson": 0.7681800478155425,
+        "spearman": 0.6071428571428572,
+        "top_k_overlap": 0.8
+      }
+    },
+    "pad_perm_mean": {
+      "description": "Recommended: pad_replace + background-mean baseline + permutation",
+      "settings": {
+        "masking": "pad_replace",
+        "baseline": "training_mean",
+        "explainer": "permutation",
+        "n_samples": 500
+      },
+      "base_value": -11.491617158055305,
+      "phi": [
+        0.16319557511806487,
+        -0.1011093812584877,
+        -0.6202236473560333,
+        0.014110501885414123,
+        4.015381101369858,
+        5.735801687002182,
+        7.516110764801502
+      ],
+      "reconstructed": 5.2316494435071945,
+      "additivity_error": 3.545981213450432,
+      "alignment": {
+        "pearson": 0.7681800478155425,
+        "spearman": 0.6071428571428572,
+        "top_k_overlap": 0.8
+      }
+    },
+    "mean_perm_mean": {
+      "description": "Mean-replace + background-mean baseline, permutation estimator",
+      "settings": {
+        "masking": "mean_replace",
+        "baseline": "training_mean",
+        "explainer": "permutation",
+        "n_samples": 500
+      },
+      "base_value": -11.491617158055305,
+      "phi": [
+        0.0,
+        0.19088712638616562,
+        1.048273407101631,
+        -0.10165152144432067,
+        0.6199785454273223,
+        7.2971068633794784,
+        7.158704376757145
+      ],
+      "reconstructed": 4.721681639552116,
+      "additivity_error": 3.0360134094953537,
+      "alignment": {
+        "pearson": 0.8259059506546972,
+        "spearman": 0.3571428571428572,
+        "top_k_overlap": 0.6
+      }
+    },
+    "del_perm_empty": {
+      "description": "Masking compare (deletion)",
+      "settings": {
+        "masking": "deletion",
+        "baseline": "empty",
+        "explainer": "permutation",
+        "n_samples": 500
+      },
+      "base_value": -15.037599563598633,
+      "phi": [
+        0.26978638863563537,
+        0.1863780178427696,
+        0.3011702008843422,
+        -0.3897560362219811,
+        5.1153867634534835,
+        5.391497920274735,
+        5.848803346693516
+      ],
+      "reconstructed": 1.6856670379638672,
+      "additivity_error": 1.1920928955078125e-06,
+      "alignment": {
+        "pearson": 0.6139437403104893,
+        "spearman": 0.7500000000000002,
+        "top_k_overlap": 0.8
+      }
+    },
+    "mean_perm_empty": {
+      "description": "Masking compare (mean_replace)",
+      "settings": {
+        "masking": "mean_replace",
+        "baseline": "empty",
+        "explainer": "permutation",
+        "n_samples": 500
+      },
+      "base_value": -15.037599563598633,
+      "phi": [
+        0.0,
+        0.19088712638616562,
+        1.048273407101631,
+        -0.10165152144432067,
+        0.6199785454273223,
+        7.2971068633794784,
+        7.158704376757145
+      ],
+      "reconstructed": 1.175699234008789,
+      "additivity_error": 0.5099689960479736,
+      "alignment": {
+        "pearson": 0.8259059506546972,
+        "spearman": 0.3571428571428572,
+        "top_k_overlap": 0.6
+      }
+    },
+    "del_empty_perm": {
+      "description": "Baseline compare (empty)",
+      "settings": {
+        "masking": "deletion",
+        "baseline": "empty",
+        "explainer": "permutation",
+        "n_samples": 500
+      },
+      "base_value": -15.037599563598633,
+      "phi": [
+        0.26978638863563537,
+        0.1863780178427696,
+        0.3011702008843422,
+        -0.3897560362219811,
+        5.1153867634534835,
+        5.391497920274735,
+        5.848803346693516
+      ],
+      "reconstructed": 1.6856670379638672,
+      "additivity_error": 1.1920928955078125e-06,
+      "alignment": {
+        "pearson": 0.6139437403104893,
+        "spearman": 0.7500000000000002,
+        "top_k_overlap": 0.8
+      }
+    },
+    "del_mean_perm": {
+      "description": "Baseline compare (background mean)",
+      "settings": {
+        "masking": "deletion",
+        "baseline": "training_mean",
+        "explainer": "permutation",
+        "n_samples": 500
+      },
+      "base_value": -11.491617158055305,
+      "phi": [
+        0.26978638863563537,
+        0.1863780178427696,
+        0.3011702008843422,
+        -0.3897560362219811,
+        5.1153867634534835,
+        5.391497920274735,
+        5.848803346693516
+      ],
+      "reconstructed": 5.2316494435071945,
+      "additivity_error": 3.545981213450432,
+      "alignment": {
+        "pearson": 0.6139437403104893,
+        "spearman": 0.7500000000000002,
+        "top_k_overlap": 0.8
+      }
+    },
+    "del_freq_perm": {
+      "description": "Baseline compare (frequent prefix)",
+      "settings": {
+        "masking": "deletion",
+        "baseline": "frequent_prefix",
+        "explainer": "permutation",
+        "n_samples": 500
+      },
+      "base_value": -13.810934066772461,
+      "phi": [
+        0.26978638863563537,
+        0.1863780178427696,
+        0.3011702008843422,
+        -0.3897560362219811,
+        5.1153867634534835,
+        5.391497920274735,
+        5.848803346693516
+      ],
+      "reconstructed": 2.912332534790039,
+      "additivity_error": 1.2266643047332764,
+      "alignment": {
+        "pearson": 0.6139437403104893,
+        "spearman": 0.7500000000000002,
+        "top_k_overlap": 0.8
+      }
+    },
+    "pad_mean_kernel": {
+      "description": "Kernel under pad_replace + background mean baseline",
+      "settings": {
+        "masking": "pad_replace",
+        "baseline": "training_mean",
+        "explainer": "kernel",
+        "n_samples": 500
+      },
+      "base_value": -11.491617158055305,
+      "phi": [
+        -0.8306844824793215,
+        -0.3652268045628556,
+        -1.4246506911194172,
+        -1.1205670849892932,
+        3.702748035065248,
+        6.464781360891862,
+        6.750902287743226
+      ],
+      "reconstructed": 1.685685462494142,
+      "additivity_error": 1.72324373792776e-05,
+      "alignment": {
+        "pearson": 0.7576956390132971,
+        "spearman": 0.6785714285714287,
+        "top_k_overlap": 0.8
+      }
+    },
+    "mean_mean_kernel": {
+      "description": "Kernel under mean_replace + background mean baseline",
+      "settings": {
+        "masking": "mean_replace",
+        "baseline": "training_mean",
+        "explainer": "kernel",
+        "n_samples": 500
+      },
+      "base_value": -11.491617158055305,
+      "phi": [
+        -0.6977810373953871,
+        0.10719437977100206,
+        0.5794001976070099,
+        -0.8288728662703092,
+        0.4774089224459495,
+        7.625266386802179,
+        5.914688572126655
+      ],
+      "reconstructed": 1.6856873970317938,
+      "additivity_error": 1.91669750311263e-05,
+      "alignment": {
+        "pearson": 0.7910212794291435,
+        "spearman": 0.8928571428571429,
+        "top_k_overlap": 0.8
+      }
+    },
+    "pad_empty_exact": {
+      "description": "Exact Shapley sanity check (only if L<=12)",
+      "settings": {
+        "masking": "pad_replace",
+        "baseline": "empty",
+        "explainer": "exact",
+        "n_samples": 500
+      },
+      "base_value": -15.037599563598633,
+      "phi": [
+        0.18642438394682748,
+        -0.08749579496326906,
+        -0.6943147317284631,
+        0.0645501548335666,
+        3.7955268605833967,
+        5.699608842957586,
+        7.7589668859328595
+      ],
+      "reconstructed": 1.6856670379638707,
+      "additivity_error": 1.1920928919550988e-06,
+      "alignment": {
+        "pearson": 0.7896012578966477,
+        "spearman": 0.6071428571428572,
+        "top_k_overlap": 0.8
+      }
+    }
+  }
+}
