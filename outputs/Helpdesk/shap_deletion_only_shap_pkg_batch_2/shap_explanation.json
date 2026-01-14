@@ -1,0 +1,179 @@
+{
+  "dataset": "Helpdesk",
+  "batch_index": 2,
+  "case_id": "Case 4381",
+  "prefix_activities": [
+    "assign-seriousness",
+    "take-in-charge-ticket",
+    "wait",
+    "take-in-charge-ticket",
+    "wait",
+    "take-in-charge-ticket",
+    "resolve-ticket",
+    "take-in-charge-ticket",
+    "wait",
+    "take-in-charge-ticket"
+  ],
+  "stored_predicted_label": "resolve-ticket",
+  "stored_predicted_prob": null,
+  "model_predicted_label": "resolve-ticket",
+  "model_predicted_prob": 0.7068281173706055,
+  "predicted_class_index": 2,
+  "L": 10,
+  "feature_names": [
+    "E1:assign-seriousness",
+    "E2:take-in-charge-ticket",
+    "E3:wait",
+    "E4:take-in-charge-ticket",
+    "E5:wait",
+    "E6:take-in-charge-ticket",
+    "E7:resolve-ticket",
+    "E8:take-in-charge-ticket",
+    "E9:wait",
+    "E10:take-in-charge-ticket"
+  ],
+  "phi_deletion_only": [
+    -0.17206690706896735,
+    0.163160806119328,
+    0.21798929406853523,
+    0.17168100300756056,
+    0.178757659734777,
+    0.16860550100671173,
+    -0.2628900531544056,
+    0.17328013060881575,
+    0.26565496540890143,
+    0.5370094387811639
+  ],
+  "base_value": 1.4107344150543213,
+  "f_full": 2.8519163131713867,
+  "verification": {
+    "phi_method": "shap_permutation_on_mask_space",
+    "base_value_true_empty": 1.4107345342636108,
+    "base_value_shap": 1.4107344150543213,
+    "base_value_diff": -1.1920928955078125e-07,
+    "f_full_true": 2.8519163131713867,
+    "f_reconstructed": 2.851916253566742,
+    "additivity_error_vs_true_full": -5.960464477539063e-08,
+    "n_permutations_target": 1000,
+    "max_evals": 11000,
+    "explain_logit": true
+  },
+  "verification_loo": {
+    "pearson_phi_vs_loo": 0.661159861336722,
+    "spearman_phi_vs_loo": 0.6848484848484848,
+    "pearson_absphi_vs_absloo": 0.9439804077611522,
+    "spearman_absphi_vs_absloo": 0.6121212121212121,
+    "loo_deltas": [
+      -0.043421268463134766,
+      -0.006090402603149414,
+      0.026823043823242188,
+      -0.02678680419921875,
+      0.1203763484954834,
+      0.07083630561828613,
+      0.041794776916503906,
+      0.08446812629699707,
+      0.12020373344421387,
+      1.3416262865066528
+    ]
+  },
+  "verification_topk": {
+    "kmax": 10,
+    "top1_positive": "E10:take-in-charge-ticket",
+    "top1_abs": "E10:take-in-charge-ticket",
+    "drops_topk_positive": [
+      1.3416262865066528,
+      0.408433198928833,
+      0.7013053894042969,
+      0.4310622215270996,
+      1.1855813264846802,
+      1.2055833339691162,
+      1.1787230968475342,
+      1.1275744438171387,
+      1.126270055770874,
+      1.4411817789077759
+    ],
+    "drops_topk_abs": [
+      1.3416262865066528,
+      0.408433198928833,
+      0.5820827484130859,
+      0.21650195121765137,
+      0.09097623825073242,
+      0.37180185317993164,
+      0.28948402404785156,
+      0.3002007007598877,
+      0.03875231742858887,
+      1.4411817789077759
+    ],
+    "increases_remove_topk_negative": [
+      -0.041794776916503906,
+      -0.030588388442993164,
+      -0.058153629302978516,
+      -0.04598855972290039,
+      0.055433034896850586,
+      0.04863262176513672,
+      -0.03357362747192383,
+      -0.03505349159240723,
+      -0.03875231742858887,
+      -1.4411817789077759
+    ]
+  },
+  "attention_alignment": {
+    "attention_available": true,
+    "attention_shape": [
+      32,
+      4,
+      14,
+      14
+    ],
+    "attn_last_row_mean_heads": [
+      0.17897112667560577,
+      0.019704822450876236,
+      0.501930832862854,
+      0.039707861840724945,
+      0.02732202596962452,
+      0.01779901422560215,
+      0.15825219452381134,
+      0.015260085463523865,
+      0.037449754774570465,
+      0.0036023221909999847
+    ],
+    "pearson_attn_vs_absphi": -0.1063136883022113,
+    "spearman_attn_vs_absphi": 0.030303030303030304,
+    "topk": 5,
+    "topk_attn_indices_0based": [
+      2,
+      0,
+      6,
+      3,
+      8
+    ],
+    "topk_absphi_indices_0based": [
+      9,
+      8,
+      6,
+      2,
+      4
+    ],
+    "topk_overlap_count": 3,
+    "topk_overlap_ratio": 0.6,
+    "topk_attn_features": [
+      "E3:wait",
+      "E1:assign-seriousness",
+      "E7:resolve-ticket",
+      "E4:take-in-charge-ticket",
+      "E9:wait"
+    ],
+    "topk_absphi_features": [
+      "E10:take-in-charge-ticket",
+      "E9:wait",
+      "E7:resolve-ticket",
+      "E3:wait",
+      "E5:wait"
+    ]
+  },
+  "settings": {
+    "explain_logit": true,
+    "n_permutations": 1000,
+    "random_seed": 123
+  }
+}
