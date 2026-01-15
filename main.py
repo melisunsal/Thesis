@@ -73,10 +73,7 @@ if __name__ == '__main__':
     # second longest prefix
     idx_second = get_nth_longest_prefix_index_from_txt(batch_file, n=1)
 
-    # second longest prefix
-    idx_third = get_nth_longest_prefix_index_from_txt(batch_file, n=2)
-
-    for i in [idx, idx_second, idx_third]:
+    for i in [idx, idx_second]:
 
         subprocess.run(
             [PY, "visualizeAttention/visualization.py",
@@ -99,18 +96,11 @@ if __name__ == '__main__':
             check=True
         )
 
-        subprocess.run(
-            [PY, "shapley_ppm_pad_replace_shap_kernel.py",
-             "--dataset", DATASET,
-             "--prefix_index", str(i)],
-            check=True
-        )
-
     #-------------------------
     # VERIFICATION
 
 
-    for i in [idx, idx_second, idx_third]:
+    for i in [idx, idx_second]:
         # subprocess.run(
         #         [PY, "shap_quick_compare.py",
         #          "--dataset", DATASET,

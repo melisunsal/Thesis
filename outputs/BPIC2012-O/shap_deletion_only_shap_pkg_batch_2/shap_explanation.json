@@ -1,0 +1,199 @@
+{
+  "dataset": "BPIC2012-O",
+  "batch_index": 2,
+  "case_id": 206357,
+  "prefix_activities": [
+    "o_selected",
+    "o_created",
+    "o_sent",
+    "o_cancelled",
+    "o_selected",
+    "o_created",
+    "o_sent",
+    "o_selected",
+    "o_cancelled",
+    "o_created",
+    "o_sent",
+    "o_cancelled",
+    "o_selected",
+    "o_created"
+  ],
+  "stored_predicted_label": "o_created",
+  "stored_predicted_prob": null,
+  "model_predicted_label": "o_sent",
+  "model_predicted_prob": 0.999833345413208,
+  "predicted_class_index": 2,
+  "L": 14,
+  "feature_names": [
+    "E1:o_selected",
+    "E2:o_created",
+    "E3:o_sent",
+    "E4:o_cancelled",
+    "E5:o_selected",
+    "E6:o_created",
+    "E7:o_sent",
+    "E8:o_selected",
+    "E9:o_cancelled",
+    "E10:o_created",
+    "E11:o_sent",
+    "E12:o_cancelled",
+    "E13:o_selected",
+    "E14:o_created"
+  ],
+  "phi_deletion_only": [
+    0.10197805113211361,
+    0.27147452881995665,
+    -1.1515503127985351,
+    0.10204147416341697,
+    0.10257396015484513,
+    0.6660169148583477,
+    -1.778088204404141,
+    0.12803774184369027,
+    0.061591481793549355,
+    2.112753397722078,
+    -3.4848335144367626,
+    0.16784057165252864,
+    0.5756785205531166,
+    13.915707007598138
+  ],
+  "base_value": -5.634190082550049,
+  "f_full": 6.157031536102295,
+  "verification": {
+    "phi_method": "shap_permutation_on_mask_space",
+    "base_value_true_empty": -5.634190082550049,
+    "base_value_shap": -5.634190082550049,
+    "base_value_diff": 0.0,
+    "f_full_true": 6.157031536102295,
+    "f_reconstructed": 6.157031536102293,
+    "additivity_error_vs_true_full": -1.7763568394002505e-15,
+    "n_permutations_target": 1000,
+    "max_evals": 15000,
+    "explain_logit": true
+  },
+  "verification_loo": {
+    "pearson_phi_vs_loo": 0.9517664994935683,
+    "spearman_phi_vs_loo": 0.31868131868131866,
+    "pearson_absphi_vs_absloo": 0.9637485993527113,
+    "spearman_absphi_vs_absloo": 0.6615384615384615,
+    "loo_deltas": [
+      -0.003986835479736328,
+      -0.005517482757568359,
+      -0.35724353790283203,
+      0.00987863540649414,
+      0.009517192840576172,
+      -0.015331745147705078,
+      -0.37053489685058594,
+      -0.006534099578857422,
+      -0.006168842315673828,
+      -0.007018089294433594,
+      -0.06950616836547852,
+      -0.14953136444091797,
+      -0.10434865951538086,
+      10.747150897979736
+    ]
+  },
+  "verification_topk": {
+    "kmax": 10,
+    "top1_positive": "E14:o_created",
+    "top1_abs": "E14:o_created",
+    "drops_topk_positive": [
+      10.747150897979736,
+      10.795138835906982,
+      10.882572174072266,
+      21.462167263031006,
+      21.483253955841064,
+      22.791053295135498,
+      33.96651220321655,
+      22.056114673614502,
+      22.36797857284546,
+      18.645853519439697
+    ],
+    "drops_topk_abs": [
+      10.747150897979736,
+      10.8506760597229,
+      10.870583057403564,
+      10.731927871704102,
+      10.72963571548462,
+      10.759317874908447,
+      10.728597640991211,
+      10.889201641082764,
+      10.516924858093262,
+      10.531826496124268
+    ],
+    "increases_remove_topk_negative": [
+      0.06950616836547852,
+      -0.2839851379394531,
+      0.3827958106994629,
+      0.7744541168212891,
+      0.776331901550293,
+      0.8024177551269531,
+      0.4965047836303711,
+      0.8071660995483398,
+      0.8231401443481445,
+      0.8250832557678223
+    ]
+  },
+  "attention_alignment": {
+    "attention_available": true,
+    "attention_shape": [
+      32,
+      4,
+      29,
+      29
+    ],
+    "attn_last_row_mean_heads": [
+      0.00767639372497797,
+      0.01748475432395935,
+      0.01732555590569973,
+      0.008928565308451653,
+      0.01372845284640789,
+      0.006815627217292786,
+      0.027419034391641617,
+      0.011018950492143631,
+      0.008605189621448517,
+      0.052369482815265656,
+      0.4679892361164093,
+      0.00922735221683979,
+      0.029350727796554565,
+      0.3220607042312622
+    ],
+    "pearson_attn_vs_absphi": 0.6861315066569554,
+    "spearman_attn_vs_absphi": 0.7802197802197802,
+    "topk": 5,
+    "topk_attn_indices_0based": [
+      10,
+      13,
+      9,
+      12,
+      6
+    ],
+    "topk_absphi_indices_0based": [
+      13,
+      10,
+      9,
+      6,
+      2
+    ],
+    "topk_overlap_count": 4,
+    "topk_overlap_ratio": 0.8,
+    "topk_attn_features": [
+      "E11:o_sent",
+      "E14:o_created",
+      "E10:o_created",
+      "E13:o_selected",
+      "E7:o_sent"
+    ],
+    "topk_absphi_features": [
+      "E14:o_created",
+      "E11:o_sent",
+      "E10:o_created",
+      "E7:o_sent",
+      "E3:o_sent"
+    ]
+  },
+  "settings": {
+    "explain_logit": true,
+    "n_permutations": 1000,
+    "random_seed": 123
+  }
+}
