@@ -1,19 +1,19 @@
 """
-Hybrid Explanation Generator
-=============================
-Loads attention scores and SHAP values for a prefix, then generates
-a natural language explanation using the LLM integration module.
+Hybrid Explanation Generator (v3 - Fixed Prediction Source)
+============================================================
+IMPORTANT FIX: Reads prediction from SHAP output file, not batch_predictions.json
+The SHAP computation re-runs the model and has the correct prediction.
 
 Usage:
     from explain_with_llm import explain_prefix
 
-    explanation = explain_prefix(
+    result = explain_prefix(
         dataset_name="BPIC2012-O",
         out_dir="./outputs",
         prefix_index=0,
         backend="gpt"
     )
-    print(explanation["explanation"])
+    print(result["explanation"])
 """
 
 import os
@@ -22,7 +22,7 @@ from typing import List, Tuple, Any, Optional, Dict
 
 import numpy as np
 
-from llm_integration import generate_hybrid_explanation2
+from llm_integration_v2 import generate_hybrid_explanation
 
 
 # ---------------------------------------------------------------------------
@@ -35,33 +35,12 @@ def summarize_attention_for_prefix(
 ) -> List[Tuple[int, float]]:
     """
     Summarize attention for the last prefix event.
-
-    This extracts where the model "looked" when making its prediction.
-    High attention weight means the model focused on that event during
-    computation, but does not necessarily imply causal influence.
-
-    Parameters
-    ----------
-    scores_one : np.ndarray
-        Attention tensor for one sample: [H, Tq, Tk] with padding
-    prefix_len : int
-        Number of real events in the prefix (L)
-    top_k : int
-        Number of top events to return
-
-    Returns
-    -------
-    List[Tuple[int, float]]
-        List of (position_index, normalized_weight) for top_k events.
-        Position is 0-based into prefix_activities.
     """
     H, Tq, Tk = scores_one.shape
     if prefix_len <= 0:
         return []
 
     L = prefix_len
-
-    # Assume left-padding: real tokens in last L positions
     offset = Tq - L
 
     # Remove PAD dimensions -> [H, L, L]
@@ -95,33 +74,12 @@ def summarize_shap_for_prefix(
 ) -> List[Tuple[int, float]]:
     """
     Summarize SHAP values for a prefix.
-
-    SHAP values indicate causal contribution: how much each event
-    pushes the prediction toward (positive) or away from (negative)
-    the predicted class. We return events with highest absolute impact.
-
-    Parameters
-    ----------
-    shap_values : np.ndarray
-        SHAP values for one sample: shape [L] or [T] with padding
-    prefix_len : int
-        Number of real events in the prefix
-    top_k : int
-        Number of top events to return
-
-    Returns
-    -------
-    List[Tuple[int, float]]
-        List of (position_index, shap_value) sorted by |shap_value|.
-        Position is 0-based. Positive = supports prediction, negative = opposes.
     """
     if prefix_len <= 0 or shap_values is None:
         return []
 
-    # Handle padding: assume SHAP values are right-aligned or full length
     T = len(shap_values)
     if T > prefix_len:
-        # Left-padded: take last L values
         offset = T - prefix_len
         shap_real = shap_values[offset:]
     else:
@@ -137,82 +95,114 @@ def summarize_shap_for_prefix(
 
 
 # ---------------------------------------------------------------------------
-# Load SHAP data from file
+# Load SHAP data AND prediction from SHAP output file
 # ---------------------------------------------------------------------------
-def load_shap_values(run_dir: str, prefix_index: int) -> Optional[np.ndarray]:
-    """Load SHAP values for a specific prefix.
-
-    Preferred source (new deletion-only pipeline):
-      outputs/<dataset>/shap_deletion_only_shap_pkg_batch_<prefix_index>/shap_explanation.json
-        - expects key: "phi_deletion_only"
-
-    Fallback sources (older experiment formats):
-      - shap_values*.npy
-      - shap_comparison*.json
-
-    Returns None if no SHAP data is found.
+def load_shap_data(run_dir: str, prefix_index: int) -> Dict[str, Any]:
     """
-    # 0) Preferred: shap_explanation.json from deletion-only pipeline
-    preferred = os.path.join(
+    Load SHAP values AND prediction from the SHAP output file.
+
+    The SHAP computation re-runs the model, so it has the CORRECT prediction.
+
+    Returns dict with:
+        - shap_values: np.ndarray or None
+        - predicted_label: str or None (from model re-run)
+        - predicted_prob: float or None (from model re-run)
+        - case_id: Any or None
+        - prefix_activities: List[str] or None
+    """
+    result = {
+        "shap_values": None,
+        "predicted_label": None,
+        "predicted_prob": None,
+        "case_id": None,
+        "prefix_activities": None,
+    }
+
+    # Primary source: shap_explanation.json from deletion-only pipeline
+    shap_json_path = os.path.join(
         run_dir,
         f"shap_deletion_only_shap_pkg_batch_{prefix_index}",
         "shap_explanation.json",
     )
-    if os.path.exists(preferred):
+
+    if os.path.exists(shap_json_path):
         try:
-            with open(preferred, "r", encoding="utf-8") as f:
+            with open(shap_json_path, "r", encoding="utf-8") as f:
                 obj = json.load(f)
+
+            # SHAP values
             phi = obj.get("phi_deletion_only", None)
             if phi is not None:
-                return np.array(phi, dtype="float64")
-        except Exception:
-            pass
+                result["shap_values"] = np.array(phi, dtype="float64")
 
-    # 1) Try numpy batch/single-file formats
+            # CORRECT prediction from model re-run
+            result["predicted_label"] = obj.get("model_predicted_label")
+            result["predicted_prob"] = obj.get("model_predicted_prob")
+            result["case_id"] = obj.get("case_id")
+            result["prefix_activities"] = obj.get("prefix_activities")
+
+            return result
+
+        except Exception as e:
+            print(f"Warning: Could not load SHAP JSON: {e}")
+
+    # Fallback: try other formats (legacy)
     for fname in os.listdir(run_dir):
         if fname.startswith("shap_values") and fname.endswith(".npy"):
             path = os.path.join(run_dir, fname)
             try:
                 data = np.load(path)
                 if data.ndim == 2 and prefix_index < len(data):
-                    return data[prefix_index]
+                    result["shap_values"] = data[prefix_index]
                 elif data.ndim == 1:
-                    return data
+                    result["shap_values"] = data
+                break
             except Exception:
                 continue
 
-    # 2) Try JSON format (from SHAP comparison experiments)
-    for fname in os.listdir(run_dir):
-        if fname.startswith("shap_comparison") and fname.endswith(".json"):
-            path = os.path.join(run_dir, fname)
-            try:
-                with open(path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
+    return result
 
-                # Look for deletion + logit configuration (validated choice)
-                for config in data.get("configurations", []):
-                    nm = config.get("name", "").lower()
-                    if ("deletion" in nm) and ("logit" in nm):
-                        shap_vals = config.get("shap_values", [])
-                        if shap_vals:
-                            return np.array(shap_vals, dtype="float64")
 
-                # Fallback: first available configuration
-                for config in data.get("configurations", []):
-                    shap_vals = config.get("shap_values", [])
-                    if shap_vals:
-                        return np.array(shap_vals, dtype="float64")
+# ---------------------------------------------------------------------------
+# Load basic prediction data from batch_predictions.json (fallback only)
+# ---------------------------------------------------------------------------
+def load_batch_prediction(run_dir: str, prefix_index: int) -> Dict[str, Any]:
+    """
+    Load prediction data from batch_predictions.json.
 
-            except Exception:
-                continue
+    NOTE: This may have STALE predictions if the model was retrained.
+    Prefer load_shap_data() which re-runs the model.
+    """
+    preds_path = os.path.join(run_dir, "batch_predictions.json")
+    if not os.path.exists(preds_path):
+        return {}
 
-    return None
+    with open(preds_path, "r", encoding="utf-8") as f:
+        preds_data = json.load(f)
+
+    predictions = preds_data.get("predictions", [])
+
+    for pred in predictions:
+        if pred.get("batch_index") == prefix_index:
+            return {
+                "case_id": pred.get("case_id"),
+                "prefix_activities": pred.get("prefix_activities"),
+                "prefix_len": pred.get("prefix_len"),
+                "predicted_label": pred.get("predicted_label"),
+                "predicted_prob": pred.get("pred_prob"),
+                "top_alternatives": [
+                    (alt["label"], float(alt["prob"]))
+                    for alt in pred.get("top_alternatives", [])
+                ],
+            }
+
+    return {}
 
 
 # ---------------------------------------------------------------------------
 # Main explanation function
 # ---------------------------------------------------------------------------
-def explain_prefix2(
+def explain_prefix(
         dataset_name: str,
         out_dir: str,
         prefix_index: int,
@@ -225,77 +215,70 @@ def explain_prefix2(
     """
     Generate a hybrid explanation for one prefix.
 
-    This function:
-      1. Loads attention scores and predictions from the run directory
-      2. Loads or uses provided SHAP values
-      3. Builds attention and SHAP summaries
-      4. Calls the LLM with the structured hybrid prompt
-      5. Returns the explanation with metadata
+    IMPORTANT: This function now reads the prediction from the SHAP output file,
+    which re-runs the model and has the CORRECT prediction.
 
     Parameters
     ----------
     dataset_name : str
         Dataset name, e.g., "BPIC2012-O" or "Helpdesk"
     out_dir : str
-        Base output directory containing attention scores and predictions
+        Base output directory
     prefix_index : int
         Index in the batch (0-based)
     top_k_attention : int
-        Number of top events by attention to include
+        Number of top events by attention
     top_k_shap : int
-        Number of top events by |SHAP| to include
+        Number of top events by |SHAP|
     backend : str
         "gpt" or "local" for LLM backend
     llm_model_name : Optional[str]
-        Override model name for the backend
+        Override model name
     shap_values : Optional[np.ndarray]
-        Pre-computed SHAP values. If None, attempts to load from files.
+        Pre-computed SHAP values (if None, loads from files)
 
     Returns
     -------
-    Dict containing:
-        - explanation: str (the generated natural language explanation)
-        - confidence_level: str (e.g., "high confidence")
-        - signals_aligned: bool or None (whether attention and SHAP agree)
-        - attention_events: List[Tuple] (top attention events used)
-        - shap_events: List[Tuple] (top SHAP events used)
-        - prompt: str (the full prompt sent to LLM, for debugging)
+    Dict with explanation, confidence_level, alignment_analysis, etc.
     """
     run_dir = os.path.join(out_dir, dataset_name)
 
-    # 1) Load attention scores
+    # 1) Load SHAP data (includes CORRECT prediction from model re-run)
+    shap_data = load_shap_data(run_dir, prefix_index)
+
+    # 2) Load batch prediction data (for alternatives and fallback)
+    batch_data = load_batch_prediction(run_dir, prefix_index)
+
+    # 3) Use SHAP prediction (correct) over batch prediction (may be stale)
+    predicted_activity = shap_data.get("predicted_label") or batch_data.get("predicted_label")
+    pred_prob = shap_data.get("predicted_prob") or batch_data.get("predicted_prob") or 0.0
+    case_id = shap_data.get("case_id") or batch_data.get("case_id")
+    prefix_activities = shap_data.get("prefix_activities") or batch_data.get("prefix_activities") or []
+    prefix_len = len(prefix_activities)
+
+    # Debug: show which prediction source we're using
+    if shap_data.get("predicted_label"):
+        print(f"  [Using prediction from SHAP output: {predicted_activity} (p={pred_prob:.4f})]")
+    else:
+        print(f"  [Warning: Using prediction from batch_predictions.json - may be stale]")
+
+    if not predicted_activity:
+        raise ValueError(f"No prediction found for prefix_index {prefix_index}")
+
+    # 4) Get alternatives from batch data
+    top_alternatives = batch_data.get("top_alternatives", [])
+
+    # 5) Load attention scores
     scores_path = os.path.join(run_dir, "block_mha_scores.npy")
     if not os.path.exists(scores_path):
         raise FileNotFoundError(f"Attention scores not found at {scores_path}")
     scores_all = np.load(scores_path)  # [B, H, Tq, Tk]
 
-    # 2) Load predictions
-    preds_path = os.path.join(run_dir, "batch_predictions.json")
-    if not os.path.exists(preds_path):
-        raise FileNotFoundError(f"Predictions not found at {preds_path}")
-    with open(preds_path, "r", encoding="utf-8") as f:
-        preds_data = json.load(f)
+    if prefix_index >= scores_all.shape[0]:
+        raise ValueError(f"prefix_index {prefix_index} out of range for attention scores")
 
-    predictions = preds_data["predictions"]
-    B = scores_all.shape[0]
-
-    if prefix_index < 0 or prefix_index >= B or prefix_index >= len(predictions):
-        raise ValueError(
-            f"prefix_index {prefix_index} out of range for batch size {B}"
-        )
-
-    pred = predictions[prefix_index]
-    prefix_activities: List[str] = pred["prefix_activities"]
-    prefix_len = int(pred["prefix_len"])
-    case_id: Any = pred["case_id"]
-    predicted_activity: str = pred["predicted_label"]
-    pred_prob: float = float(pred["pred_prob"])
-    top_alternatives: List[Tuple[str, float]] = [
-        (alt["label"], float(alt["prob"])) for alt in pred["top_alternatives"]
-    ]
-
-    # 3) Summarize attention
-    scores_one = scores_all[prefix_index]  # [H, Tq, Tk]
+    # 6) Summarize attention
+    scores_one = scores_all[prefix_index]
     attn_summary = summarize_attention_for_prefix(
         scores_one, prefix_len, top_k=top_k_attention
     )
@@ -306,9 +289,9 @@ def explain_prefix2(
         if 0 <= pos < len(prefix_activities)
     ]
 
-    # 4) Load and summarize SHAP
+    # 7) Get SHAP values and summarize
     if shap_values is None:
-        shap_values = load_shap_values(run_dir, prefix_index)
+        shap_values = shap_data.get("shap_values")
 
     if shap_values is not None:
         shap_summary = summarize_shap_for_prefix(
@@ -321,9 +304,10 @@ def explain_prefix2(
         ]
     else:
         shap_events = []
+        print(f"  [Warning: No SHAP values found for prefix_index {prefix_index}]")
 
-    # 5) Generate explanation
-    result = generate_hybrid_explanation2(
+    # 8) Generate explanation
+    result = generate_hybrid_explanation(
         dataset_name=dataset_name,
         case_id=case_id,
         prefix_activities=prefix_activities,
@@ -336,18 +320,20 @@ def explain_prefix2(
         llm_model_name=llm_model_name,
     )
 
-    # Add the event summaries to result
+    # Add metadata
     result["attention_events"] = attention_events
     result["shap_events"] = shap_events
     result["case_id"] = case_id
     result["predicted_activity"] = predicted_activity
+    result["pred_prob"] = pred_prob
     result["prefix_len"] = prefix_len
+    result["prefix_activities"] = prefix_activities
 
     return result
 
 
 # ---------------------------------------------------------------------------
-# Convenience function for direct SHAP + attention input
+# Convenience function for direct signal input
 # ---------------------------------------------------------------------------
 def explain_with_signals(
         dataset_name: str,
@@ -364,16 +350,6 @@ def explain_with_signals(
 ) -> Dict[str, Any]:
     """
     Generate explanation from pre-computed attention and SHAP arrays.
-
-    This is useful when you have the signals already computed and
-    don't need to load from files.
-
-    Parameters
-    ----------
-    attention_weights : List[float]
-        Attention weights for each position (should sum to ~1)
-    shap_values : List[float]
-        SHAP values for each position (positive = supports, negative = opposes)
     """
     L = len(prefix_activities)
 
@@ -393,7 +369,7 @@ def explain_with_signals(
         for pos, val in shap_sorted
     ]
 
-    return generate_hybrid_explanation2(
+    return generate_hybrid_explanation(
         dataset_name=dataset_name,
         case_id=case_id,
         prefix_activities=prefix_activities,
@@ -407,11 +383,8 @@ def explain_with_signals(
     )
 
 
-# ---------------------------------------------------------------------------
-# Example usage
-# ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    # Example with direct signal input
+    # Example
     result = explain_with_signals(
         dataset_name="BPIC2012-O",
         case_id="case_12345",
@@ -425,9 +398,4 @@ if __name__ == "__main__":
         shap_values=[0.3, 1.2, 0.5, -0.8, 0.9, 2.1],
         backend="gpt",
     )
-
-    print("=== EXPLANATION ===")
     print(result["explanation"])
-    print()
-    print(f"Confidence: {result['confidence_level']}")
-    print(f"Signals aligned: {result['signals_aligned']}")
