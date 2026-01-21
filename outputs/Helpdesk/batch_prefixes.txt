@@ -1,32 +1,32 @@
-assign-seriousness
-assign-seriousness wait
-assign-seriousness take-in-charge-ticket wait take-in-charge-ticket wait take-in-charge-ticket resolve-ticket take-in-charge-ticket wait take-in-charge-ticket
-assign-seriousness assign-seriousness
+assign-seriousness take-in-charge-ticket resolve-ticket
+assign-seriousness assign-seriousness take-in-charge-ticket wait take-in-charge-ticket resolve-ticket
 assign-seriousness take-in-charge-ticket
+assign-seriousness take-in-charge-ticket
+insert-ticket assign-seriousness
+create-sw-anomaly
+insert-ticket assign-seriousness take-in-charge-ticket resolve-ticket take-in-charge-ticket wait take-in-charge-ticket
+assign-seriousness take-in-charge-ticket
+assign-seriousness take-in-charge-ticket require-upgrade create-sw-anomaly resolve-ticket resolved
+assign-seriousness take-in-charge-ticket create-sw-anomaly create-sw-anomaly resolve-sw-anomaly resolve-sw-anomaly
+assign-seriousness
 assign-seriousness take-in-charge-ticket wait resolve-ticket
-assign-seriousness take-in-charge-ticket wait resolve-ticket
-take-in-charge-ticket resolve-ticket
+assign-seriousness take-in-charge-ticket
+assign-seriousness take-in-charge-ticket wait wait take-in-charge-ticket
+assign-seriousness take-in-charge-ticket
 assign-seriousness take-in-charge-ticket wait
-assign-seriousness take-in-charge-ticket resolve-ticket
-assign-seriousness take-in-charge-ticket wait take-in-charge-ticket resolve-ticket
-assign-seriousness take-in-charge-ticket resolve-ticket
-assign-seriousness assign-seriousness take-in-charge-ticket
-assign-seriousness
 assign-seriousness
 assign-seriousness take-in-charge-ticket
+assign-seriousness
+assign-seriousness assign-seriousness take-in-charge-ticket resolve-ticket
 assign-seriousness take-in-charge-ticket
-assign-seriousness
-assign-seriousness
 assign-seriousness take-in-charge-ticket resolve-ticket
-assign-seriousness take-in-charge-ticket resolve-ticket
-assign-seriousness take-in-charge-ticket resolve-ticket
+assign-seriousness take-in-charge-ticket
 assign-seriousness take-in-charge-ticket
 assign-seriousness assign-seriousness
 assign-seriousness take-in-charge-ticket resolve-ticket
-assign-seriousness
-assign-seriousness
+assign-seriousness take-in-charge-ticket resolve-ticket
 assign-seriousness take-in-charge-ticket
-assign-seriousness take-in-charge-ticket resolve-ticket
+assign-seriousness take-in-charge-ticket resolve-ticket resolve-ticket
 assign-seriousness
-assign-seriousness take-in-charge-ticket resolve-ticket
-assign-seriousness take-in-charge-ticket take-in-charge-ticket
+take-in-charge-ticket resolve-ticket
+assign-seriousness

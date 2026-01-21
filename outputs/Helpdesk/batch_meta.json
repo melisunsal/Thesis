@@ -1,162 +1,162 @@
 [
   {
     "index": 0,
-    "case_id": "Case 3665",
-    "prefix": "assign-seriousness"
+    "case_id": "Case 3667",
+    "prefix": "assign-seriousness take-in-charge-ticket resolve-ticket"
   },
   {
     "index": 1,
-    "case_id": "Case 3685",
-    "prefix": "assign-seriousness wait"
+    "case_id": "Case 3841",
+    "prefix": "assign-seriousness assign-seriousness take-in-charge-ticket wait take-in-charge-ticket resolve-ticket"
   },
   {
     "index": 2,
-    "case_id": "Case 4381",
-    "prefix": "assign-seriousness take-in-charge-ticket wait take-in-charge-ticket wait take-in-charge-ticket resolve-ticket take-in-charge-ticket wait take-in-charge-ticket"
-  },
-  {
-    "index": 3,
-    "case_id": "Case 3669",
-    "prefix": "assign-seriousness assign-seriousness"
-  },
-  {
-    "index": 4,
     "case_id": "Case 3665",
     "prefix": "assign-seriousness take-in-charge-ticket"
   },
   {
+    "index": 3,
+    "case_id": "Case 3666",
+    "prefix": "assign-seriousness take-in-charge-ticket"
+  },
+  {
+    "index": 4,
+    "case_id": "Case 3802",
+    "prefix": "insert-ticket assign-seriousness"
+  },
+  {
     "index": 5,
+    "case_id": "Case 3839",
+    "prefix": "create-sw-anomaly"
+  },
+  {
+    "index": 6,
+    "case_id": "Case 4375",
+    "prefix": "insert-ticket assign-seriousness take-in-charge-ticket resolve-ticket take-in-charge-ticket wait take-in-charge-ticket"
+  },
+  {
+    "index": 7,
+    "case_id": "Case 3667",
+    "prefix": "assign-seriousness take-in-charge-ticket"
+  },
+  {
+    "index": 8,
+    "case_id": "Case 3897",
+    "prefix": "assign-seriousness take-in-charge-ticket require-upgrade create-sw-anomaly resolve-ticket resolved"
+  },
+  {
+    "index": 9,
+    "case_id": "Case 4463",
+    "prefix": "assign-seriousness take-in-charge-ticket create-sw-anomaly create-sw-anomaly resolve-sw-anomaly resolve-sw-anomaly"
+  },
+  {
+    "index": 10,
+    "case_id": "Case 3665",
+    "prefix": "assign-seriousness"
+  },
+  {
+    "index": 11,
     "case_id": "Case 3665",
     "prefix": "assign-seriousness take-in-charge-ticket wait resolve-ticket"
   },
   {
-    "index": 6,
-    "case_id": "Case 3666",
-    "prefix": "assign-seriousness take-in-charge-ticket wait resolve-ticket"
+    "index": 12,
+    "case_id": "Case 3668",
+    "prefix": "assign-seriousness take-in-charge-ticket"
   },
   {
-    "index": 7,
-    "case_id": "Case 3736",
-    "prefix": "take-in-charge-ticket resolve-ticket"
+    "index": 13,
+    "case_id": "Case 3717",
+    "prefix": "assign-seriousness take-in-charge-ticket wait wait take-in-charge-ticket"
   },
   {
-    "index": 8,
+    "index": 14,
+    "case_id": "Case 3670",
+    "prefix": "assign-seriousness take-in-charge-ticket"
+  },
+  {
+    "index": 15,
     "case_id": "Case 3665",
     "prefix": "assign-seriousness take-in-charge-ticket wait"
   },
   {
-    "index": 9,
-    "case_id": "Case 3667",
-    "prefix": "assign-seriousness take-in-charge-ticket resolve-ticket"
-  },
-  {
-    "index": 10,
-    "case_id": "Case 3697",
-    "prefix": "assign-seriousness take-in-charge-ticket wait take-in-charge-ticket resolve-ticket"
-  },
-  {
-    "index": 11,
-    "case_id": "Case 3668",
-    "prefix": "assign-seriousness take-in-charge-ticket resolve-ticket"
-  },
-  {
-    "index": 12,
-    "case_id": "Case 3669",
-    "prefix": "assign-seriousness assign-seriousness take-in-charge-ticket"
-  },
-  {
-    "index": 13,
-    "case_id": "Case 3666",
-    "prefix": "assign-seriousness"
-  },
-  {
-    "index": 14,
-    "case_id": "Case 3667",
-    "prefix": "assign-seriousness"
-  },
-  {
-    "index": 15,
-    "case_id": "Case 3666",
-    "prefix": "assign-seriousness take-in-charge-ticket"
-  },
-  {
     "index": 16,
-    "case_id": "Case 3667",
-    "prefix": "assign-seriousness take-in-charge-ticket"
+    "case_id": "Case 3666",
+    "prefix": "assign-seriousness"
   },
   {
     "index": 17,
-    "case_id": "Case 3668",
-    "prefix": "assign-seriousness"
+    "case_id": "Case 3671",
+    "prefix": "assign-seriousness take-in-charge-ticket"
   },
   {
     "index": 18,
-    "case_id": "Case 3669",
+    "case_id": "Case 3667",
     "prefix": "assign-seriousness"
   },
   {
     "index": 19,
-    "case_id": "Case 3670",
-    "prefix": "assign-seriousness take-in-charge-ticket resolve-ticket"
+    "case_id": "Case 3688",
+    "prefix": "assign-seriousness assign-seriousness take-in-charge-ticket resolve-ticket"
   },
   {
     "index": 20,
-    "case_id": "Case 3671",
-    "prefix": "assign-seriousness take-in-charge-ticket resolve-ticket"
+    "case_id": "Case 3672",
+    "prefix": "assign-seriousness take-in-charge-ticket"
   },
   {
     "index": 21,
-    "case_id": "Case 3672",
+    "case_id": "Case 3668",
     "prefix": "assign-seriousness take-in-charge-ticket resolve-ticket"
   },
   {
     "index": 22,
-    "case_id": "Case 3668",
+    "case_id": "Case 3673",
     "prefix": "assign-seriousness take-in-charge-ticket"
   },
   {
     "index": 23,
-    "case_id": "Case 3688",
-    "prefix": "assign-seriousness assign-seriousness"
+    "case_id": "Case 3674",
+    "prefix": "assign-seriousness take-in-charge-ticket"
   },
   {
     "index": 24,
-    "case_id": "Case 3674",
-    "prefix": "assign-seriousness take-in-charge-ticket resolve-ticket"
+    "case_id": "Case 3669",
+    "prefix": "assign-seriousness assign-seriousness"
   },
   {
     "index": 25,
     "case_id": "Case 3670",
-    "prefix": "assign-seriousness"
+    "prefix": "assign-seriousness take-in-charge-ticket resolve-ticket"
   },
   {
     "index": 26,
     "case_id": "Case 3671",
-    "prefix": "assign-seriousness"
+    "prefix": "assign-seriousness take-in-charge-ticket resolve-ticket"
   },
   {
     "index": 27,
-    "case_id": "Case 3670",
+    "case_id": "Case 3675",
     "prefix": "assign-seriousness take-in-charge-ticket"
   },
   {
     "index": 28,
-    "case_id": "Case 3675",
-    "prefix": "assign-seriousness take-in-charge-ticket resolve-ticket"
+    "case_id": "Case 3676",
+    "prefix": "assign-seriousness take-in-charge-ticket resolve-ticket resolve-ticket"
   },
   {
     "index": 29,
-    "case_id": "Case 3672",
+    "case_id": "Case 3668",
     "prefix": "assign-seriousness"
   },
   {
     "index": 30,
-    "case_id": "Case 3676",
-    "prefix": "assign-seriousness take-in-charge-ticket resolve-ticket"
+    "case_id": "Case 3736",
+    "prefix": "take-in-charge-ticket resolve-ticket"
   },
   {
     "index": 31,
-    "case_id": "Case 3740",
-    "prefix": "assign-seriousness take-in-charge-ticket take-in-charge-ticket"
+    "case_id": "Case 3669",
+    "prefix": "assign-seriousness"
   }
 ]
