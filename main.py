@@ -75,16 +75,16 @@ if __name__ == '__main__':
     batch_file = OUTPUTS_DIR / DATASET / "batch_prefixes.txt"
     idx = get_longest_prefix_index_from_txt(batch_file)
 
-    # second longest prefix
-    idx_second = get_nth_longest_prefix_index_from_txt(batch_file, n=1)
-
-    # second longest prefix
-    idx_third = get_nth_longest_prefix_index_from_txt(batch_file, n=2)
+    # # second longest prefix
+    # idx_second = get_nth_longest_prefix_index_from_txt(batch_file, n=1)
+    #
+    # # second longest prefix
+    # idx_third = get_nth_longest_prefix_index_from_txt(batch_file, n=2)
 
     # ==========================================================================
     # STEP 3: Run visualization and SHAP computation
     # ==========================================================================
-    for i in [idx, idx_second,idx_third]:
+    for i in [idx]:
         subprocess.run(
             [PY, "visualizeAttention/visualization.py",
              "--dataset", DATASET,
@@ -125,7 +125,7 @@ if __name__ == '__main__':
     print("GENERATING LLM EXPLANATIONS")
     print("=" * 80 + "\n")
 
-    for i in [idx, idx_second, idx_third]:
+    for i in [idx]:
         print(f"\n--- Explanation for prefix_index={i} ---\n")
 
         # GPT version (requires OPENAI_API_KEY environment variable)
@@ -163,12 +163,41 @@ if __name__ == '__main__':
     # ==========================================================================
     # Alternative: Local LLM (no API key needed)
     # ==========================================================================
-    # for i in [idx, idx_second]:
-    #     result = explain_prefix(
-    #         dataset_name=DATASET,
-    #         out_dir="./outputs",
-    #         prefix_index=i,
-    #         backend="local",  # Uses TinyLlama by default
-    #         llm_model_name=None,
-    #     )
-    #     print(result.get("explanation"))
+    #
+    # print("\n" + "=" * 80)
+    # print("GENERATING LLM EXPLANATIONS")
+    # print("=" * 80 + "\n")
+    #
+    # for i in [idx]:
+    #     print(f"\n--- Explanation for prefix_index={i} ---\n")
+    #
+    #     # GPT version (requires OPENAI_API_KEY environment variable)
+    #     try:
+    #         result = explain_prefix(
+    #             dataset_name=DATASET,
+    #             out_dir="./outputs",
+    #             prefix_index=i,
+    #             backend="local",  # Uses TinyLlama by default
+    #             llm_model_name=None,
+    #         )
+    #
+    #         print("EXPLANATION:")
+    #         print("-" * 40)
+    #         print(result.get("explanation"))
+    #         print("-" * 40)
+    #         print(f"Confidence: {result.get('confidence_level')}")
+    #
+    #         # Print alignment analysis
+    #         alignment = result.get("alignment_analysis", {})
+    #         if alignment:
+    #             print(f"Signal alignment: {alignment.get('alignment_strength', 'N/A')}")
+    #             print(f"Aligned events: {len(alignment.get('aligned_events', []))}")
+    #             if alignment.get('aligned_events'):
+    #                 for evt in alignment['aligned_events']:
+    #                     print(f"  - Event {evt['position'] + 1} ({evt['activity']}): "
+    #                           f"attn={evt['attention_weight']:.0%}, shap={evt['shap_value']:+.2f}")
+    #
+    #         print()
+    #
+    #     except Exception as e:
+    #         print(f"Error generating explanation: {e}")

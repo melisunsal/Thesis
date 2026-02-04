@@ -27,8 +27,7 @@ KEY GUIDELINES:
    - ATTENTION: Where the model focused when processing this case
    - SHAP: How the prediction score changes when events are removed
 2. When signals don't align, explain what EACH signal tells us separately
-3. Make SPECIFIC assumptions based on this prefix's data
-4. Use clear business language - no ML jargon
+3. Use clear business language - no ML jargon
 
 IMPORTANT FORMATTING RULES:
 - Do NOT include numeric probabilities (no "96%" or "0.35")
@@ -418,12 +417,6 @@ Think of it as "what helps or hurts the prediction."
                 f"The prediction is less certain."
             )
 
-    # Specific observations for assumptions
-    assumption_lines = ["PREFIX-SPECIFIC FACTS FOR ASSUMPTIONS:"]
-    for obs in patterns.get("specific_observations", []):
-        assumption_lines.append(f"• {obs['description']}")
-    assumption_block = "\n".join(assumption_lines)
-
     process_context = _get_process_context(dataset_name)
 
     # =========================================================================
@@ -454,8 +447,6 @@ Prefix length: {prefix_len} events
 
 {shap_analysis}
 
-[{assumption_block}]
-
 [EXPLANATION TASK]
 Write a clear explanation for a process analyst.
 
@@ -475,10 +466,6 @@ Write a clear explanation for a process analyst.
    IMPORTANT: Do NOT say "removing X would increase/decrease the score" - this is confusing.
    Instead, directly say "X has positive/negative impact" or "X supports/opposes the prediction."
 
-5. Make SPECIFIC assumptions using the prefix facts provided.
-   Example: "Assumption: The sequence o_created → o_sent appears at Events 3, 8, and 14. 
-   Since Event 19 is o_created, the model predicts o_sent based on this consistent 
-   pattern in the case history."
 
 RULES:
 - NO numeric values
@@ -524,7 +511,7 @@ def _get_local_llm_pipe(model_name: Optional[str]):
     global _local_llm_pipe
     if _local_llm_pipe is not None:
         return _local_llm_pipe
-    model_id = model_name or "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+    model_id = model_name or "meta-llama/Llama-3.2-3B-Instruct"
     _local_llm_pipe = pipeline(
         "text-generation",
         model=model_id,
@@ -567,7 +554,6 @@ def generate_hybrid_explanation(
     Generate explanation with detailed analysis of non-aligned events.
     """
     alignment_analysis = analyze_signal_alignment(attention_events, shap_events)
-    pattern_analysis = analyze_prefix_patterns(prefix_activities, predicted_activity)
 
     prompt = _build_user_prompt(
         dataset_name=dataset_name,
@@ -593,7 +579,6 @@ def generate_hybrid_explanation(
         "explanation": explanation,
         "confidence_level": _confidence_level(pred_prob),
         "alignment_analysis": alignment_analysis,
-        "pattern_analysis": pattern_analysis,
         "prompt": prompt,
     }
 
