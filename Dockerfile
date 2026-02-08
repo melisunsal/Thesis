@@ -31,8 +31,8 @@ RUN pip install --no-cache-dir --no-deps \
 RUN pip install --no-cache-dir --no-binary scipy -c /tmp/constraints.txt "scipy>=1.12.0,<2.0.0"
 RUN pip install --no-cache-dir --no-binary scikit-learn -c /tmp/constraints.txt scikit-learn==1.6.1
 
-# Install remaining dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install remaining dependencies (keep --no-binary for scipy/sklearn to prevent overwriting source builds)
+RUN pip install --no-cache-dir --no-binary scipy,scikit-learn -r requirements.txt
 
 # Copy project files
 COPY . .
