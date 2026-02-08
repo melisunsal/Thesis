@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--repo_root", default="/Users/Q671967/PycharmProjects/Thesis", help="Repo root")
+ap.add_argument("--repo_root", default=os.path.dirname(os.path.abspath(__file__)), help="Repo root")
 ap.add_argument("--dataset", default="BPIC2012-O", help="Dataset name")
 ap.add_argument("--prefix_index", help="Index of longest prefix")
 args = ap.parse_args()
