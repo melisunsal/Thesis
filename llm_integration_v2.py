@@ -481,6 +481,7 @@ RULES:
 # LLM Clients
 # ---------------------------------------------------------------------------
 _gpt_client: Optional[OpenAI] = None
+OPENAI_API=""
 
 def _get_gpt_client() -> OpenAI:
     global _gpt_client

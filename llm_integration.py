@@ -285,6 +285,7 @@ and say explicitly when evidence for an interpretation is weak or ambiguous.
 # GPT client (OpenAI)
 # ---------------------------------------------------------------------------
 _gpt_client: Optional[OpenAI] = None
+OPENAI_API=""
 
 
 def _get_gpt_client() -> OpenAI:
