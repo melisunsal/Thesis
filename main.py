@@ -1,9 +1,9 @@
+import argparse
 import subprocess
 import sys
 from typing import Union
 from pathlib import Path
 
-from explain_with_llm import explain_prefix2
 from explain_with_llm_v2 import explain_prefix
 
 
@@ -47,9 +47,29 @@ def load_prefix_by_index_from_txt(path: Union[str, Path], idx: int) -> list[str]
     return prefixes[idx].split()
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Run the explanation generation pipeline for Transformer-based PPM"
+    )
+    parser.add_argument(
+        "--dataset", type=str, default="BPIC2012-O",
+        help="Dataset name (default: BPIC2012-O)"
+    )
+    parser.add_argument(
+        "--prefix_index", type=int, default=None,
+        help="Prefix index to explain. If not specified, uses the longest prefix."
+    )
+    parser.add_argument(
+        "--generate_batch", action="store_true",
+        help="Generate new batch by running get_attention_hooked.py first"
+    )
+    return parser.parse_args()
+
 if __name__ == '__main__':
 
-    DATASET = "BPIC2012-O"
+    args = parse_args()
+
+    DATASET = args.dataset
     OUTPUTS_DIR = Path("outputs")
 
     PY = sys.executable
@@ -65,15 +85,24 @@ if __name__ == '__main__':
     # )
 
     # ==========================================================================
-    # STEP 2: Extract attention scores (uncomment if needed)
+    # STEP 2: Extract attention scores (run with --generate_batch flag)
     # ==========================================================================
-    # subprocess.run(
-    #     [PY, "get_attention_hooked.py", "--dataset", DATASET],
-    #     check=True
-    # )
+    if args.generate_batch:
+        print("Generating new batch prefixes...")
+        subprocess.run(
+            [PY, "get_attention_hooked.py", "--dataset", DATASET],
+            check=True
+        )
 
     batch_file = OUTPUTS_DIR / DATASET / "batch_prefixes.txt"
-    idx = get_longest_prefix_index_from_txt(batch_file)
+
+    # Use provided prefix_index or default to longest prefix
+    if args.prefix_index is not None:
+        idx = args.prefix_index
+        print(f"Using provided prefix index: {idx}")
+    else:
+        idx = get_longest_prefix_index_from_txt(batch_file)
+        print(f"Using longest prefix index: {idx}")
 
     # # second longest prefix
     # idx_second = get_nth_longest_prefix_index_from_txt(batch_file, n=1)

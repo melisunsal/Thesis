@@ -55,11 +55,12 @@ The framework supports the following publicly available event logs:
 |---------|-------------|----------|
 | **Helpdesk** | IT service management tickets | Initial development and testing |
 | **BPIC2012** | Loan application process | Scalability validation |
-| **BPIC2013** | IT incident management | Generalizability testing |
 
 Datasets are located in the `datasets/` directory.
 
 ## Prerequisites
+
+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
 
 - **Python**: 3.8 or higher
 - **OpenAI API Key**: Required for LLM-based explanation generation
@@ -76,7 +77,12 @@ Follow these steps to set up and run the explanation generation pipeline.
 git clone https://github.com/melisunsal/Thesis.git
 cd Thesis
 ```
-
+- **Git**: Required to clone the repository and install some dependencies
+  - Download from [git-scm.com](https://git-scm.com/downloads)
+- **OpenAI API Key**: Required for LLM-based explanation generation (Step 5)
+- **System packages** (Linux only, for building scipy from source): `gfortran`, `libopenblas-dev`
+ 
+> **Note**: Throughout this guide, if `python` doesn't work on your system, try `python3` instead. Similarly, use `pip3` if `pip` doesn't work.
 ### Step 2: Create and Activate Virtual Environment
 
 **On Linux/macOS:**
@@ -118,11 +124,24 @@ $env:OPENAI_API_KEY="your-api-key-here"
 
 ### Step 5: Run the Program
 
+**Run with default settings (longest prefix):**
+
 ```bash
 python main.py
 ```
 
-This will execute the full pipeline including data processing, model prediction, attention extraction, SHAP computation, and LLM-based explanation generation.
+This will execute the full pipeline including visualization, SHAP computation, and LLM-based explanation generation for the longest prefix in the batch.
+ 
+#### Command-Line Options
+ 
+| Option | Description |
+|--------|-------------|
+| `--dataset` | Dataset name (default: `BPIC2012-O`) |
+| `--prefix_index` | Specific prefix index to explain (default: longest prefix) |
+| `--generate_batch` | Generate new batch prefixes before running |
+
+ 
+> **Note**: The repository includes a pre-generated batch with good prefix index for testing. When generating a new batch with `--generate_batch`, the resulting prefixes may be shorter and less suitable for demonstrating the framework. You may need to run `--generate_batch` multiple times to get prefixes with sufficient length for meaningful explanations.
 
 ---
 
