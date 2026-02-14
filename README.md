@@ -60,8 +60,6 @@ Datasets are located in the `datasets/` directory.
 
 ## Prerequisites
 
-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
-
 - **Python**: 3.8 or higher
 - **OpenAI API Key**: Required for LLM-based explanation generation
 
